@@ -25,7 +25,6 @@ function MainApp() {
 }
 
 
-
 // exports everything if want to import from outside
 module.exports = {
   MainApp

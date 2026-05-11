@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron --trace-warnings ."
   },
   "keywords": [],
   "author": "",
@@ -13,5 +13,9 @@
   "type": "commonjs",
   "devDependencies": {
     "electron": "^42.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "electron-store": "^11.0.2"
   }
 }

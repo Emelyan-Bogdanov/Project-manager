@@ -28,7 +28,7 @@ Vue.component("project-card", {
       // You can remove 'author', 'title', 'description', 'image' here if you handle defaults via props
     };
   },
-  methods: {},
+  methods: {  },
   template: `
 <div class="project">
   <!-- left = logo du projet -->
@@ -47,7 +47,7 @@ Vue.component("project-card", {
       <div class="tag" v-for="tag in tags" :key="tag">{{ tag }}</div>
     </div>
     <div class="description"><p>{{ description }}</p></div>
-    <div class="owner">Created by : <a href='/author/{{author}}'>  {{ author }} </a> </div>
+    <div class="owner">Created by :<a v-bind:href="'/author/' + author">  {{ author }} </a> </div>
   </div>
 </div>
 `,

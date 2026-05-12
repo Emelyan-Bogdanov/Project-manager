@@ -1,4 +1,4 @@
-Vue.component("project-card", {
+  Vue.component("project-card", {
   name: "project-card",
   props: {
     tags: {
@@ -32,6 +32,18 @@ Vue.component("project-card", {
       type: String,
       default: "12 Feb",
     },
+    thumbnail : {
+      type:String,
+      default:""
+    },
+    urls : {
+      type : Array ,
+      default : () => [
+        "https://i.pravatar.cc/100?img=4",
+        "https://i.pravatar.cc/100?img=2",
+        "https://i.pravatar.cc/100?img=1"
+      ]
+    }
   },
   data: function () {
     return {
@@ -59,13 +71,13 @@ Vue.component("project-card", {
               <div class="card-footer-custom">
                 <div class="avatars">
                 <!-- to modify later -->
-                  <img src="https://i.pravatar.cc/100?img=4" />
-                  <img src="https://i.pravatar.cc/100?img=4" />
-                  <img src="https://i.pravatar.cc/100?img=4" />
+
+                  <img v-for="url in urls" :src="url" />
                 </div>
 
                 <div class="text-secondary small">
                   <i class="bi bi-chat"></i> {{commentsCount}}
+                  <i class="bi bi-eye"></i> {{views}}
                 </div>
               </div>
             </div>

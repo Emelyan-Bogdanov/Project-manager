@@ -15,6 +15,7 @@
     <script src="../assets/compos/project-card.js"></script>
     <script src="../assets/compos/menu-button.js"></script>
     <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
 
     <!-- Icons -->
     <link
@@ -37,61 +38,48 @@
 
           <!-- MENU -->
           <div class="sidebar-title">Menu</div>
-          
-          <side-menu-button biclass="bi-house-fill" count="13" spanText="kkkkkkkkkk">
-          </side-menu-button>
-          
 
-          <side-menu-button biclass="bi-check2-square">
-          </side-menu-button>
-
-          <side-menu-button biclass="bi-check2-square" spanText="Tasks">
+          <side-menu-button
+            biclass="bi-house-fill"
+            count="13"
+            span-text="kkkkkkkkkk"
+          >
           </side-menu-button>
 
-          <side-menu-button biclass="bi-chat-dots" spanText="Tasks">
+          <side-menu-button biclass="bi-check2-square"> </side-menu-button>
+
+          <side-menu-button biclass="bi-check2-square" span-text="Tasks">
           </side-menu-button>
-          
+
+          <side-menu-button biclass="bi-chat-dots" span-text="Tasks">
+          </side-menu-button>
+
           <!-- PROJECTS -->
-          
+
           <sidebar-section-header></sidebar-section-header>
-          
-          <side-menu-button biclass="bi-stack" spanText="Publications"></side-menu-button>
 
-          <side-menu-button biclass="bi-calendar2-week" spanText="Planning"></side-menu-button>
+          <side-menu-button
+            biclass="bi-stack"
+            span-text="Publications"
+          ></side-menu-button>
 
+          <side-menu-button
+            biclass="bi-calendar2-week"
+            span-text="Planning"
+          ></side-menu-button>
 
-          <side-menu-button spanText="Design Internal"></side-menu-button>
-          
-          <side-menu-button spanText="Marketing" ></side-menu-button>
+          <side-menu-button span-text="Design Internal"></side-menu-button>
 
-        <!-- MEMBERS -->
-        <sidebar-section-header title="This is a text">
+          <side-menu-button span-text="ddddd"></side-menu-button>
 
-        </sidebar-section-header>
+          <!-- MEMBERS -->
+          <sidebar-section-header title="Membres de projet">
+          </sidebar-section-header>
 
-          <div class="member-item">
-            <img src="https://i.pravatar.cc/100?img=1" alt="" />
-            <div>
-              <div class="member-name">Zaid Myers</div>
-              <div class="member-time">08:06:28 for this week</div>
-            </div>
-          </div>
-
-          <div class="member-item">
-            <img src="https://i.pravatar.cc/100?img=2" alt="" />
-            <div>
-              <div class="member-name">Rebecca Young</div>
-              <div class="member-time">12:41:07 for this week</div>
-            </div>
-          </div>
-
-          <div class="member-item">
-            <img src="https://i.pravatar.cc/100?img=3" alt="" />
-            <div>
-              <div class="member-name">Isaac Bowman</div>
-              <div class="member-time">01:56:22 for this week</div>
-            </div>
-          </div>
+          <sidebar-member-item></sidebar-member-item>
+          <sidebar-member-item></sidebar-member-item>
+          <sidebar-member-item></sidebar-member-item>
+          <sidebar-member-item></sidebar-member-item>
         </div>
       </aside>
 
@@ -118,18 +106,6 @@
           <div class="topbar-left">
             <h3 class="mb-0">Publications</h3>
 
-            <!-- <button class="outline-btn"><i class="bi bi-list-task"></i>
-              List
-            </button>
-
-            <button class="btn btn-dark rounded-4 px-4"><i class="bi bi-columns-gap"></i>
-              Board
-            </button>
-            
-            <button class="outline-btn"><i class="bi bi-diagram-3"></i>
-              Workflow
-            </button> -->
-
             <button class="view-btn clicked">+ Nouveau tâche</button>
           </div>
         </div>
@@ -150,7 +126,13 @@
               In Progress <span class="text-secondary fs-5">(2)</span>
             </div>
 
-            <project-card> </project-card>
+            <project-card
+              title="title of the project card"
+              description="this is a description of the tassk"
+              views="50"
+              comments-count="55"
+            >
+            </project-card>
           </div>
 
           <!-- COLUMN -->
@@ -172,9 +154,9 @@
       });
     </script>
     <script>
-      setTimeout(()=>{
+      setTimeout(() => {
         document.location.reload();
-      },500)
+      }, 2000);
     </script>
   </body>
 </html>

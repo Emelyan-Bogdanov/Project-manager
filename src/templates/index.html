@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="../assets/css/all.css" />
     <link rel="stylesheet" href="../assets/css/index.css" />
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/myframework.css" />
+
 
     <!-- vuejs -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -20,24 +22,17 @@
         <div class="profile">
           <img src="../assets/imgs/icon.png" />
         </div>
-        <h1>User name</h1>
+        <h1 id="myprofile" class="clicked">User name</h1>
         <hr />
         <div class="tags">
-          <tag-compo :count="11" label="Working"></tag-compo>
+          <tag-compo :count="101" label="Working"></tag-compo>
           <tag-compo :count="11" label="Working"></tag-compo>
           <tag-compo :count="11" label="Working"></tag-compo>
         </div>
       </div>
       <!-- list of projects  -->
       <div class="right-side-projects">
-        <div class="project-controls">
-          <input type="text" name="" id="" />
-          <button class="search">
-            <img src="../assets/imgs/search.png" alt="" />
-          </button>
-        </div>
-
-        <project-card :tags="['Work','attack','test']" ></project-card>
+        <project-card :tags="['Work','attack','test',]"></project-card>
         <project-card></project-card>
       </div>
     </div>

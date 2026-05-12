@@ -26,9 +26,9 @@ Vue.component("tag-compo", {
     check: function () {
       this.checked = !this.checked;
     },
-    clicked: function(){
+    clicked: function () {
       console.log(
-        `Clicked tag with label : ${this.count} and count ${this.count}`,
+        `Clicked tag with label : ${this.label} and count ${this.count}`,
       );
     },
   },

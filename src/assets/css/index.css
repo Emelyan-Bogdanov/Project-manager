@@ -25,6 +25,7 @@ body {
   align-items: center;
   padding: 10px;
   overflow-y: auto;
+  resize: both;
 }
 
 .left-side-profile > * {
@@ -148,44 +149,7 @@ body {
   margin-inline: 3px;
 }
 
-.right-side-projects .project-controls input {
-  padding: 5px;
-  font-family: "cairo-light";
-  border: none;
-  flex-grow: 1;
-  background: #427ab5;
-  color: #f7dd7d;
-}
-
-.right-side-projects .project-controls input:focus {
-  outline: solid 1px #215b63;
-}
-
-/* search button  */
-.right-side-projects .project-controls .search {
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border: none;
-  padding: 7px;
-  background-color: #3b7597;
-  outline: solid 1px;
-  border-radius: 4px;
-
-  /*  */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.right-side-projects .project-controls .search:active {
-  scale: 0.95 0.95;
-}
-
-.right-side-projects .project-controls .search img {
-  width: 30px;
-  height: 30px;
-}
+/* top bar panel to search for projects */
 
 /* right side with list of projects */
 .right-side-projects {

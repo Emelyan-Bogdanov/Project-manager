@@ -1,0 +1,9 @@
+
+
+.clicked {
+    cursor: pointer;
+}
+.clicked:active {
+    scale : 0.95 0.95;
+}
+

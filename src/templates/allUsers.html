@@ -26,6 +26,8 @@
         v-for="user in filteredUsers"
         :key="user.id"
         :username="user.username"
+        :tags = "user.tags"
+        :location = "user.location"
       ></user-card-item>
     </div>
   </div>

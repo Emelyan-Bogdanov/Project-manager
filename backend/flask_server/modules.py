@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 
 class User(db.Model) :
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True) 
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -20,6 +21,7 @@ class User(db.Model) :
             db.session.commit()
 
 class Workspace(db.Model) :
+    __tablename__ = "workspaces"
     id = db.Column(db.Integer, primary_key=True) 
     name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.Text , nullable=False)
@@ -62,3 +64,10 @@ class Comment(db.Model):
         for i in range(count):
             db.session.add(Workspace(f"text_blablabla_{random.randint(666,5955)}"))
             db.session.commit()
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text,nullable=False)
+    authorId = db.Column(db.Integer,nullable=False)
+    workspaceId = db.Column(db.Integer,nullable=False)
+    

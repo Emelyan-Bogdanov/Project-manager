@@ -19,8 +19,11 @@ def create_app() :
             db.session.commit()
 
     # ======= routes =========
-    from .routes import main_bp
-    app.register_blueprint(main_bp)
-    # CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
+    from .routes import main_bp , message_bp  , workspace_bp , task_bp
     
+    app.register_blueprint(main_bp)
+    app.register_blueprint(message_bp)
+    app.register_blueprint(workspace_bp)
+    app.register_blueprint(task_bp)
+        
     return app

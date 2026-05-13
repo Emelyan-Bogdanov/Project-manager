@@ -28,7 +28,7 @@ Vue.component("side-menu-button", {
   methods: {
     gotourl: function () {
       if (this.url !== "") {
-        window.location.href = "allUsers.html";
+        window.location.href = url;
       }
     },
   },

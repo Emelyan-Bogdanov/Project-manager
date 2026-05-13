@@ -4,25 +4,27 @@ from ..modules import Task, User, db
 
 task_bp = Blueprint("tasks", __name__)
 
-def parse_tags(tags_raw):
-    if not tags_raw:
+def parse_json_field(raw):
+    if not raw:
         return []
-    if isinstance(tags_raw, list):
-        return tags_raw
+    if isinstance(raw, list):
+        return raw
     try:
-        return json.loads(tags_raw)
+        return json.loads(raw)
     except (json.JSONDecodeError, TypeError):
         try:
-            return eval(tags_raw)
+            return eval(raw)
         except:
-            return [tags_raw]
+            return [raw]
 
 def task_to_dict(task):
     author = User.query.get(task.authorId) if task.authorId else None
     return {
         "id": task.id,
         "title": task.title,
-        "tags": parse_tags(task.tags),
+        "description": task.description or "",
+        "tags": parse_json_field(task.tags),
+        "images": parse_json_field(task.images),
         "deadline": task.deadline,
         "authorId": task.authorId,
         "authorName": author.username if author else "Utilisateur",
@@ -46,9 +48,10 @@ def add_task():
     task = Task.add_task(
         title=data.get("title"),
         tags=data.get("tags"),
+        description=data.get("description", ""),
         deadline=data.get("deadline"),
         authorId=data.get("authorId"),
-        images=data.get("images", ""),
+        images=data.get("images", "[]"),
         priority=data.get("priority", 1),
         status=data.get("status", "todo")
     )
@@ -56,28 +59,9 @@ def add_task():
 
 @task_bp.route("/task/<int:task_id>")
 def task_info(task_id):
-    # try to find the task
     try :
         task = Task.query.get(task_id)
-        return {
-            "id":task.id,
-            "title":task.title,
-            "tags" : task.tags,
-            "views" : task.views,
-            "comments" : task.comments,
-            "deadline" : task.deadline,
-            "authorId" : task.authorId,
-            "images" : task.images, # remember to convert to array using json loadString
-        }
+        return jsonify(task_to_dict(task))
     except :
         print("ERROR WHILE GETTING THE TASK INFO USING ITS ID")
-        return {
-            "id":"ERROR",
-            "title":"ERROR",
-            "tags" :"ERROR",
-            "views" :"ERROR",
-            "comments" :"ERROR",
-            "deadline" :"ERROR",
-            "authorId" :"ERROR",
-            "images" :"ERROR",
-        }
+        return jsonify({"error": "Task not found"}), 404

@@ -72,12 +72,13 @@ class Task(db.Model) :
     title = db.Column(db.String(250),nullable=False)
     """ tags are arrays , but stored as json dumped """
     tags = db.Column(db.String(300) , nullable=False)
+    description = db.Column(db.Text, default="")
     views = db.Column(db.Integer, default=0)
     comments = db.Column(db.Integer, default=0)
     deadline = db.Column(db.String(70) , nullable=False)
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
-    images = db.Column(db.String(250) , default="")
+    images = db.Column(db.String(1000) , default="[]")
     priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
     status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     
@@ -89,10 +90,11 @@ class Task(db.Model) :
             db.session.commit()
 
     @staticmethod
-    def add_task(title, tags, deadline, authorId, images="", priority=1, status="todo"):
+    def add_task(title, tags, deadline, authorId, description="", images="[]", priority=1, status="todo"):
         task = Task(
             title=title,
             tags=tags,
+            description=description,
             deadline=deadline,
             authorId=authorId,
             images=images,
@@ -188,13 +190,26 @@ def seed_database(db):
             "Maquettes mobile", "CI/CD Pipeline", "Page connexion"
         ]
         tag_pool = ["Frontend", "Backend", "Design", "DevOps", "Mobile", "UI", "BDD", "Auth"]
+        descriptions = [
+            "Mettre en place le systeme de design pour l'application",
+            "Implementer l'authentification via JWT",
+            "Ecrire les tests unitaires pour les modules principaux",
+            "Creer la page de parametres utilisateur",
+            "Developper le tableau de bord avec les statistiques",
+            "Concevoir le schema de la base de donnees",
+            "Configurer les notifications par email",
+            "Realiser les maquettes pour la version mobile",
+            "Mettre en place le pipeline CI/CD",
+            "Developper la page de connexion et d'inscription"
+        ]
         for i in range(10):
             task = Task(
                 title=titles[i],
                 tags=json.dumps([tag_pool[i % 8]]),
+                description=descriptions[i],
                 deadline=f"{random.randint(1, 28)} Mai",
                 authorId=random.randint(1, 8),
-                images="",
+                images="[]",
                 priority=random.randint(1, 3),
                 status=statuses[i % 3]
             )

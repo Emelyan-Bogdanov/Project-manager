@@ -89,10 +89,65 @@
               :comments-count="task.commentsCount"
               :urls="task.urls"
               :author="task.author"
+              :image="task.image"
             ></project-card>
           </div>
         </div>
       </main>
+
+      <!-- New Task Modal -->
+      <div class="modal-overlay" v-if="showTaskModal" @click.self="showTaskModal = false">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>Nouvelle tâche</h3>
+            <button class="modal-close" @click="showTaskModal = false">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Titre</label>
+              <input type="text" v-model="newTask.title" placeholder="Titre de la tâche" />
+            </div>
+            <div class="form-group">
+              <label>Description / Notes</label>
+              <textarea v-model="newTask.description" placeholder="Description détaillée..." rows="4"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Date limite</label>
+                <input type="text" v-model="newTask.deadline" placeholder="ex: 15 Juin" />
+              </div>
+              <div class="form-group flex-1">
+                <label>Priorité</label>
+                <select v-model="newTask.priority">
+                  <option :value="1">Basse</option>
+                  <option :value="2">Moyenne</option>
+                  <option :value="3">Haute</option>
+                </select>
+              </div>
+              <div class="form-group flex-1">
+                <label>Statut</label>
+                <select v-model="newTask.status">
+                  <option value="todo">À faire</option>
+                  <option value="in_progress">En cours</option>
+                  <option value="done">Terminé</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tags (séparés par des virgules)</label>
+              <input type="text" v-model="newTask.tagsInput" placeholder="ex: Frontend, UI, React" />
+            </div>
+            <div class="form-group">
+              <label>Images (URLs, une par ligne)</label>
+              <textarea v-model="newTask.imagesInput" placeholder="https://example.com/image1.png" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="showTaskModal = false">Annuler</button>
+            <button class="btn-submit" @click="createTask">Créer la tâche</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -113,6 +168,16 @@
           showFilters: false,
           selectedTag: "",
           selectedUser: "",
+          showTaskModal: false,
+          newTask: {
+            title: "",
+            description: "",
+            deadline: "",
+            status: "todo",
+            priority: 1,
+            tagsInput: "",
+            imagesInput: "",
+          },
         },
         computed: {
           availableTags() {
@@ -168,6 +233,7 @@
                 author: t.authorName || "Utilisateur",
                 authorId: t.authorId,
                 status: t.status || "todo",
+                image: (t.images && t.images.length > 0) ? t.images[0] : "",
                 urls: [avatars[(t.authorId || 1) % avatars.length]],
               }));
             } catch (e) {
@@ -183,15 +249,35 @@
           },
           openNewTask() {
             this.showTaskModal = true;
-            this.newTask = { title: "", deadline: "", status: "todo", tags: "" };
+            this.newTask = {
+              title: "",
+              description: "",
+              deadline: "",
+              status: "todo",
+              priority: 1,
+              tagsInput: "",
+              imagesInput: "",
+            };
           },
           async createTask() {
+            if (!this.newTask.title.trim()) return;
+            const tags = this.newTask.tagsInput
+              .split(",")
+              .map(t => t.trim())
+              .filter(t => t);
+            const images = this.newTask.imagesInput
+              .split("\n")
+              .map(u => u.trim())
+              .filter(u => u);
             try {
               await window.electronAPI.createTask({
                 title: this.newTask.title,
+                description: this.newTask.description,
                 deadline: this.newTask.deadline || "N/A",
                 status: this.newTask.status,
-                tags: JSON.stringify([this.newTask.tags]),
+                tags: JSON.stringify(tags),
+                images: JSON.stringify(images),
+                priority: this.newTask.priority,
                 authorId: 1,
               });
               this.showTaskModal = false;

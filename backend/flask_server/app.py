@@ -12,6 +12,8 @@ def create_app() :
     with app.app_context() :
         db.create_all()
         from .modules import User , Task , Comment ,Workspace
+        
+        # add synthetic data
         import random
         for i in range(20):
             user = User(username=f"user_{random.randint(999,99999999)}" , email=f"email_{random.randint(999,99999999)}",password=f"1234{i}")
@@ -19,11 +21,13 @@ def create_app() :
             db.session.commit()
 
     # ======= routes =========
-    from .routes import main_bp , message_bp  , workspace_bp , task_bp
+    from .routes import main_bp , message_bp  , workspace_bp , task_bp , users_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(message_bp)
     app.register_blueprint(workspace_bp)
     app.register_blueprint(task_bp)
-        
+    app.register_blueprint(users_bp)
+    
+    
     return app

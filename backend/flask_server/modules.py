@@ -55,6 +55,43 @@ class Task(db.Model) :
             db.session.add(Task(f"title_{i}" , f"deadline_{i}",f"{random.randint(555,999999)}{random.randint(555,999999)}{random.randint(555,999999)}"))
             db.session.commit()
 
+    @staticmethod
+    def add_task(title, tags, deadline, authorId, images="", priority=1, status="todo"):
+        task = Task(
+            title=title,
+            tags=tags,
+            deadline=deadline,
+            authorId=authorId,
+            images=images,
+            priority=priority,
+            status=status
+        )
+        db.session.add(task)
+        db.session.commit()
+        return task
+
+    @staticmethod
+    def get_task(task_id):
+        return Task.query.get(task_id)
+
+    @staticmethod
+    def update_task(task_id, **kwargs):
+        task = Task.query.get(task_id)
+        if task:
+            for key, value in kwargs.items():
+                if hasattr(task, key):
+                    setattr(task, key, value)
+            db.session.commit()
+        return task
+
+    @staticmethod
+    def delete_task(task_id):
+        task = Task.query.get(task_id)
+        if task:
+            db.session.delete(task)
+            db.session.commit()
+        return task
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

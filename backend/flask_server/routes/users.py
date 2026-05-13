@@ -22,8 +22,6 @@ def allUsers():
 # how many users are in the app
 @users_bp.route("/howmanyusers")
 def getnUser():
-    import requests
-    
     return str(User.query.count())
 
 # delete a user

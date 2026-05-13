@@ -30,7 +30,7 @@ class Workspace(db.Model) :
     @staticmethod
     def create_synthetic(db,count=5):
         for i in range(count):
-           db.session.add( Workspace(f"workspace_{i}" , f"description_{i}"))
+           db.session.add( Workspace(name=f"workspace_{i}" , description=f"description_{i}"))
            db.session.commit()
 
     @staticmethod
@@ -78,14 +78,14 @@ class Task(db.Model) :
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
     images = db.Column(db.String(250) , default="")
-    priority = db.Column(db.Integer, default=1),  # 1 = Low, 2 = Medium, 3 = High
+    priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
     status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     
     @staticmethod
     def create_synthetic(db,count=5):
         import random
         for i in range(count):
-            db.session.add(Task(f"title_{i}" , f"deadline_{i}",f"{random.randint(555,999999)}{random.randint(555,999999)}{random.randint(555,999999)}"))
+            db.session.add(Task(title=f"title_{i}" , deadline=f"deadline_{i}",tags=f"{random.randint(555,999999)}{random.randint(555,999999)}{random.randint(555,999999)}"))
             db.session.commit()
 
     @staticmethod
@@ -134,7 +134,7 @@ class Comment(db.Model):
     def create_synthetic(db,count=5):
         import random
         for i in range(count):
-            db.session.add(Workspace(f"text_blablabla_{random.randint(666,5955)}"))
+            db.session.add(Comment(text=f"text_blablabla_{random.randint(666,5955)}"))
             db.session.commit()
 
 class Message(db.Model):

@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, jsonify
 from ..modules import Task, db
 
@@ -48,7 +47,7 @@ def task_info(task_id):
         }
     except :
         print("ERROR WHILE GETTING THE TASK INFO USING ITS ID")
-        {
+        return {
             "id":"ERROR",
             "title":"ERROR",
             "tags" :"ERROR",

@@ -1,0 +1,229 @@
+.main-content {
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #7b7d85;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.dash-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dash-card.team-overview {
+  grid-column: 1 / -1;
+}
+
+.dash-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dash-card-header h5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dash-link {
+  font-size: 13px;
+  color: #ff9838;
+  text-decoration: none;
+}
+
+.project-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.project-item:last-child {
+  border-bottom: none;
+}
+
+.project-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.project-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.project-item-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.project-item-meta {
+  font-size: 12px;
+  color: #7b7d85;
+}
+
+.project-item-status {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.status-progress {
+  background: #fff0dd;
+  color: #ff9838;
+}
+
+.status-done {
+  background: #e8faf5;
+  color: #2ecc71;
+}
+
+.status-pending {
+  background: #fde8e8;
+  color: #e74c3c;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-avatar img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.activity-text {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.activity-time {
+  font-size: 11px;
+  color: #7b7d85;
+  margin-top: 2px;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.team-member:last-child {
+  border-bottom: none;
+}
+
+.team-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.team-info {
+  flex: 1;
+}
+
+.team-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.team-role {
+  font-size: 12px;
+  color: #7b7d85;
+}
+
+.team-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.team-status.online {
+  background: #2ecc71;
+}
+
+.team-status.offline {
+  background: #ccc;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

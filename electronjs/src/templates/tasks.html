@@ -17,7 +17,7 @@
     <script src="../assets/compos/sidebar-section-header.js"></script>
     <script src="../assets/compos/sidebar-member-item.js"></script>
     <script src="../assets/compos/column-title.js"></script>
-    <script src="../assets/compos/comp-logo.js"></script>
+    <script src="../assets/compos/left-big-menu.js"></script>
 
     <!-- Icons -->
     <link
@@ -29,99 +29,114 @@
     <div class="dashboard-wrapper d-flex" id="app">
       <!-- sidebar  -->
       <aside class="sidebar">
-        <!-- left menu in everything -->
-        <left-big-menu> </left-big-menu>
+        <left-big-menu></left-big-menu>
       </aside>
 
-      <!-- =========================
-          MAIN CONTENT
-    ========================== -->
-
       <main class="main-content">
-        <!-- TOPBAR -->
         <div class="topbar">
           <div class="topbar-left">
-            <!-- <h3 class="mb-0">Publications</h3> -->
-            <button class="new-task clicked">+ Nouveau tâche</button>
+            <h3 class="mb-0">Tâches</h3>
+            <button class="new-task clicked" @click="openNewTask">
+              <i class="bi bi-plus-lg"></i> Nouvelle tâche
+            </button>
           </div>
         </div>
-        <!-- SEARCH -->
+
         <div class="search-row">
           <div class="search-box">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="trouver des tâches..." />
+            <input type="text" v-model="searchQuery" placeholder="Trouver des tâches..." />
           </div>
           <div class="filters">
-            <span class="clicked"><i class="bi bi-funnel"></i> Sort by</span>
-            <span class="clicked"><i class="bi bi-sliders"></i> Filters</span>
-            <span class="clicked"><i class="bi bi-eye"></i> Show</span>
+            <span class="clicked" @click="sortBy"><i class="bi bi-funnel"></i> Trier</span>
+            <span class="clicked" @click="toggleFilters"><i class="bi bi-sliders"></i> Filtres</span>
+            <span class="clicked" @click="toggleView"><i class="bi bi-eye"></i> Vue</span>
           </div>
         </div>
 
-        <!-- BOARD -->
         <div class="board">
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 1"></column-title>
-
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-          </div>
-
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 2"></column-title>
+          <div class="board-column" v-for="col in filteredColumns" :key="col.name">
+            <column-title :text="col.name" :count="col.tasks.length"></column-title>
 
             <project-card
-              title="title of the project card"
-              description="this is a description of the tassk"
-              views="50"
-              comments-count="55"
-            >
-            </project-card>
-            <project-card></project-card>
-            <project-card></project-card>
-            <project-card></project-card>
-          </div>
-
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 3"></column-title>
-
-            <project-card> </project-card>
+              v-for="(task, idx) in col.tasks"
+              :key="idx"
+              :title="task.title"
+              :description="task.description"
+              :tags="task.tags"
+              :deadline="task.deadline"
+              :views="task.views"
+              :comments-count="task.commentsCount"
+              :urls="task.urls"
+              :author="task.author"
+            ></project-card>
           </div>
         </div>
       </main>
     </div>
-    <!-- create compos -->
+
     <script>
-      let myapp = new Vue({
-        el: "#app" /* this sould have the selector of the root element */,
-        data: {},
+      new Vue({
+        el: "#app",
+        data: {
+          searchQuery: "",
+          columns: [
+            {
+              name: "À faire",
+              tasks: [
+                { title: "Design system", description: "Créer les composants de base du design system (boutons, inputs, modales)", tags: ["Design", "UI"], deadline: "15 Mai", views: 12, commentsCount: 3, author: "Claire", urls: ["https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=1"] },
+                { title: "API Auth", description: "Implémenter l'authentification JWT côté backend", tags: ["Backend", "Auth"], deadline: "18 Mai", views: 8, commentsCount: 1, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2"] },
+                { title: "Tests unitaires", description: "Écrire les tests pour les modules existants", tags: ["Tests"], deadline: "20 Mai", views: 5, commentsCount: 0, author: "David", urls: ["https://i.pravatar.cc/100?img=4"] },
+                { title: "Page paramètres", description: "Créer la page de paramètres utilisateur", tags: ["Frontend", "UI"], deadline: "22 Mai", views: 7, commentsCount: 2, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=3"] },
+              ],
+            },
+            {
+              name: "En cours",
+              tasks: [
+                { title: "Tableau de bord", description: "Finaliser les widgets du tableau de bord", tags: ["Frontend", "Dashboard"], deadline: "12 Mai", views: 24, commentsCount: 5, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2"] },
+                { title: "Base de données", description: "Optimiser les requêtes SQL et ajouter les index", tags: ["Backend", "BDD"], deadline: "14 Mai", views: 15, commentsCount: 4, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2", "https://i.pravatar.cc/100?img=4"] },
+                { title: "Notification email", description: "Système d'envoi d'emails pour les notifications", tags: ["Backend"], deadline: "16 Mai", views: 10, commentsCount: 1, author: "David", urls: ["https://i.pravatar.cc/100?img=4"] },
+              ],
+            },
+            {
+              name: "Terminé",
+              tasks: [
+                { title: "Maquettes mobile", description: "Maquettes Figma pour la version mobile", tags: ["Design", "Mobile"], deadline: "8 Mai", views: 42, commentsCount: 7, author: "Claire", urls: ["https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=1"] },
+                { title: "CI/CD Pipeline", description: "Mettre en place GitHub Actions pour le déploiement", tags: ["DevOps"], deadline: "5 Mai", views: 18, commentsCount: 2, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2"] },
+                { title: "Page connexion", description: "Interface de connexion et d'inscription", tags: ["Frontend", "Auth"], deadline: "2 Mai", views: 35, commentsCount: 6, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=3"] },
+              ],
+            },
+          ],
+        },
+        computed: {
+          filteredColumns() {
+            const q = this.searchQuery.toLowerCase();
+            if (!q) return this.columns;
+            return this.columns.map(col => ({
+              ...col,
+              tasks: col.tasks.filter(t =>
+                t.title.toLowerCase().includes(q) ||
+                t.description.toLowerCase().includes(q) ||
+                t.tags.some(tag => tag.toLowerCase().includes(q))
+              ),
+            }));
+          },
+        },
+        methods: {
+          openNewTask() {
+            console.log("Nouvelle tâche");
+          },
+          sortBy() {
+            console.log("Trier");
+          },
+          toggleFilters() {
+            console.log("Filtres");
+          },
+          toggleView() {
+            console.log("Changer de vue");
+          },
+        },
       });
-    </script>
-    <script>
-      setTimeout(() => {
-        document.location.reload();
-      }, 58500);
-    </script>
-    <!-- get users -->
-    <script>
-      fetch("http://127.0.0.1:8080/howmanyusers")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("nUser").innerHTML = data;
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching users:",
-            error,
-            " \nMybe you have to turn on flask server",
-          );
-        });
     </script>
   </body>
 </html>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../assets/css/index.css" />
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../assets/css/myframework.css" />
+    <link rel="stylesheet" href="../assets/css/dashboard.css" />
 
     <!-- vuejs -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -18,7 +19,11 @@
     <script src="../assets/compos/sidebar-member-item.js"></script>
     <script src="../assets/compos/column-title.js"></script>
     <script src="../assets/compos/left-big-menu.js"></script>
-    
+    <script src="../assets/compos/stat-card.js"></script>
+    <script src="../assets/compos/project-list-item.js"></script>
+    <script src="../assets/compos/activity-item.js"></script>
+    <script src="../assets/compos/team-member-item.js"></script>
+
     <!-- Icons -->
     <link
       rel="stylesheet"
@@ -29,41 +34,129 @@
     <div class="dashboard-wrapper d-flex" id="app">
       <!-- sidebar  -->
       <aside class="sidebar">
-        <!-- left menu in everything -->
-        <left-big-menu>
-        </left-big-menu>
+        <left-big-menu></left-big-menu>
       </aside>
 
-        <!-- right center main content -->
-      <main class="main-content"></main>
+      <!-- right center main content -->
+      <main class="main-content">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h3 class="mb-0">Tableau de bord</h3>
+          </div>
+          <div class="topbar-right">
+            <button class="new-task clicked" @click="openNewProject">
+              <i class="bi bi-plus-lg"></i> Nouveau projet
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats cards -->
+        <div class="stats-row">
+          <stat-card
+            v-for="stat in stats"
+            :key="stat.label"
+            :icon="stat.icon"
+            :bg="stat.bg"
+            :count="stat.count"
+            :label="stat.label"
+          ></stat-card>
+        </div>
+
+        <!-- Dashboard grid -->
+        <div class="dashboard-grid">
+          <!-- Recent Projects -->
+          <div class="dash-card recent-projects">
+            <div class="dash-card-header">
+              <h5>Projets récents</h5>
+              <a href="#" class="dash-link" @click.prevent>Voir tout</a>
+            </div>
+            <div class="dash-card-body">
+              <project-list-item
+                v-for="proj in recentProjects"
+                :key="proj.name"
+                :name="proj.name"
+                :members="proj.members"
+                :tasks="proj.tasks"
+                :status="proj.status"
+                :status-class="proj.statusClass"
+                :color="proj.color"
+              ></project-list-item>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="dash-card recent-activity">
+            <div class="dash-card-header">
+              <h5>Activité récente</h5>
+              <a href="#" class="dash-link" @click.prevent>Voir tout</a>
+            </div>
+            <div class="dash-card-body">
+              <activity-item
+                v-for="act in activities"
+                :key="act.text"
+                :avatar="act.avatar"
+                :user="act.user"
+                :action="act.action"
+                :time="act.time"
+              ></activity-item>
+            </div>
+          </div>
+
+          <!-- Team Overview -->
+          <div class="dash-card team-overview">
+            <div class="dash-card-header">
+              <h5>Équipe</h5>
+              <a href="#" class="dash-link" @click.prevent>Voir tout</a>
+            </div>
+            <div class="dash-card-body">
+              <team-member-item
+                v-for="member in team"
+                :key="member.name"
+                :avatar="member.avatar"
+                :name="member.name"
+                :role="member.role"
+                :online="member.online"
+              ></team-member-item>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-    <!-- create compos -->
+
     <script>
-      let myapp = new Vue({
+      new Vue({
         el: "#app",
         data: {
-          userCount: 0,
-          tasks: [],
-          workspaces: [],
-          users: [],
-          messages: []
-        },
-        mounted() {
-          this.loadData();
+          stats: [
+            { icon: "bi-people", label: "Utilisateurs", count: 24, bg: "#e8f4fd" },
+            { icon: "bi-folder", label: "Projets", count: 12, bg: "#fef3e2" },
+            { icon: "bi-check2-square", label: "Tâches", count: 156, bg: "#e8faf5" },
+            { icon: "bi-chat-dots", label: "Messages", count: 43, bg: "#f4e8fd" },
+          ],
+          recentProjects: [
+            { name: "Site E-commerce", members: 5, tasks: 23, status: "En cours", statusClass: "status-progress", color: "#ff9838" },
+            { name: "App Mobile", members: 3, tasks: 12, status: "Terminé", statusClass: "status-done", color: "#2ecc71" },
+            { name: "Dashboard Analytics", members: 4, tasks: 18, status: "En cours", statusClass: "status-progress", color: "#3498db" },
+            { name: "Refonte UI", members: 2, tasks: 8, status: "En attente", statusClass: "status-pending", color: "#e74c3c" },
+          ],
+          activities: [
+            { user: "Alice", action: "a ajouté une nouvelle tâche dans Site E-commerce", time: "il y a 5 min", avatar: "https://i.pravatar.cc/100?img=1" },
+            { user: "Bob", action: "a commenté la tâche #42", time: "il y a 12 min", avatar: "https://i.pravatar.cc/100?img=2" },
+            { user: "Claire", action: "a rejoint le projet App Mobile", time: "il y a 1h", avatar: "https://i.pravatar.cc/100?img=3" },
+            { user: "David", action: "a terminé la tâche #38", time: "il y a 2h", avatar: "https://i.pravatar.cc/100?img=4" },
+          ],
+          team: [
+            { name: "Alice Martin", role: "Chef de projet", avatar: "https://i.pravatar.cc/100?img=1", online: true },
+            { name: "Bob Dupont", role: "Développeur", avatar: "https://i.pravatar.cc/100?img=2", online: true },
+            { name: "Claire Bernard", role: "Designer", avatar: "https://i.pravatar.cc/100?img=3", online: false },
+            { name: "David Petit", role: "Développeur", avatar: "https://i.pravatar.cc/100?img=4", online: true },
+          ],
         },
         methods: {
-          async loadData() {
-            try {
-              this.users = await window.electronAPI.getUsers();
-              this.tasks = await window.electronAPI.getTasks();
-              this.workspaces = await window.electronAPI.getWorkspaces();
-              this.messages = await window.electronAPI.getMessages();
-              this.userCount = this.users.length;
-            } catch (error) {
-              console.error('Error loading data:', error);
-            }
-          }
-        }
+          openNewProject() {
+            console.log("Nouveau projet");
+          },
+        },
       });
     </script>
   </body>

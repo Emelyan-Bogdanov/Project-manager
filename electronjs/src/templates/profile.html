@@ -14,77 +14,91 @@
     />
   </head>
   <body>
-    <button onclick="window.history.back()" class="gohome btn custom-orange d-flex align-items-center justify-content-center shadow-lg clicked">
-      <i class="bi bi-arrow-left me-2"></i> Retour
-    </button>
+    <div class="dashboard-wrapper d-flex" id="app">
+      <aside class="sidebar">
+        <left-big-menu></left-big-menu>
+      </aside>
 
-    <div class="profile-page" id="app">
-      <div class="profile-header">
-        <div class="profile-cover"></div>
-        <div class="profile-info-row">
-          <img src="https://i.pravatar.cc/120?img=1" alt="" class="profile-avatar" />
-          <div class="profile-details">
-            <h1 class="profile-name">{{ user.name }}</h1>
-            <p class="profile-role">{{ user.role }}</p>
-            <p class="profile-location">
-              <i class="bi bi-geo-alt"></i> {{ user.location }}
-            </p>
+      <main class="main-content" style="background: #f5f6fa;">
+        <button onclick="window.history.back()" class="gohome btn custom-orange d-flex align-items-center justify-content-center shadow-lg clicked">
+          <i class="bi bi-arrow-left me-2"></i> Retour
+        </button>
+
+        <div class="profile-page">
+          <div class="profile-header">
+            <div class="profile-cover"></div>
+            <div class="profile-info-row">
+              <img :src="user.avatar" alt="" class="profile-avatar" />
+              <div class="profile-details">
+                <h1 class="profile-name">{{ user.name || user.username }}</h1>
+                <p class="profile-role">{{ user.role || 'Membre' }}</p>
+                <p class="profile-location" v-if="user.email">
+                  <i class="bi bi-envelope"></i> {{ user.email }}
+                </p>
+              </div>
+            </div>
           </div>
-          <button class="edit-profile-btn clicked">
-            <i class="bi bi-pencil"></i> Modifier
-          </button>
-        </div>
-      </div>
 
-      <div class="profile-body">
-        <div class="profile-section">
-          <h5>À propos</h5>
-          <p>{{ user.bio }}</p>
-        </div>
-
-        <div class="profile-section">
-          <h5>Compétences</h5>
-          <div class="skill-tags">
-            <span class="skill-tag" v-for="skill in user.skills" :key="skill">{{ skill }}</span>
-          </div>
-        </div>
-
-        <div class="profile-section">
-          <h5>Activité récente</h5>
-          <div class="profile-activity">
-            <activity-item
-              v-for="act in user.activity"
-              :key="act.text"
-              :icon="act.icon"
-              :user="act.user"
-              :action="act.text"
-              :time="act.time"
-              :avatar="''"
-            ></activity-item>
+          <div class="profile-body">
+            <div class="profile-section">
+              <h5>Projets</h5>
+              <p v-if="user.projectCount !== undefined">{{ user.projectCount }} projet(s) associ\u00e9(s)</p>
+              <p v-else>Aucune information</p>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script src="../assets/compos/activity-item.js"></script>
+    <script src="../assets/compos/menu-button.js"></script>
+    <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/left-big-menu.js"></script>
     <script>
+      const avatars = [
+        "https://i.pravatar.cc/120?img=1", "https://i.pravatar.cc/120?img=2",
+        "https://i.pravatar.cc/120?img=3", "https://i.pravatar.cc/120?img=4",
+        "https://i.pravatar.cc/120?img=5", "https://i.pravatar.cc/120?img=6",
+        "https://i.pravatar.cc/120?img=7", "https://i.pravatar.cc/120?img=8",
+      ];
+
       new Vue({
         el: "#app",
         data: {
           user: {
-            name: "Alice Martin",
-            role: "Chef de projet",
-            location: "Paris, France",
-            bio: "Passionnée par la gestion de projets et le développement d'applications. Experte en méthodologies agiles et coordination d'équipes.",
-            skills: ["Gestion de projet", "Agile", "JavaScript", "UI/UX Design", "Communication"],
-            activity: [
-              { icon: "bi-check2-circle", user: "", text: "A terminé la tâche 'Page d'accueil'", time: "2h" },
-              { icon: "bi-plus-circle", user: "", text: "A créé le projet 'Site Vitrine'", time: "1j" },
-              { icon: "bi-chat", user: "", text: "A commenté sur la tâche #15", time: "2j" },
-              { icon: "bi-person-plus", user: "", text: "A rejoint l'équipe 'Dashboard'", time: "3j" },
-            ],
+            name: "Chargement...",
+            avatar: avatars[0],
+            email: "",
+            role: "",
           },
+        },
+        async mounted() {
+          const params = new URLSearchParams(window.location.search);
+          const userId = params.get("user");
+          if (userId) {
+            try {
+              const users = await window.electronAPI.getUsers();
+              const u = users.find(u => String(u.id) === userId);
+              if (u) {
+                const idx = users.indexOf(u);
+                this.user = {
+                  username: u.username,
+                  name: u.username,
+                  email: u.email,
+                  role: "Membre",
+                  avatar: avatars[idx % avatars.length],
+                };
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          } else {
+            const session = await window.electronAPI.checkSession();
+            if (session.loggedIn) {
+              this.user = { ...session.user, avatar: avatars[0] };
+            }
+          }
         },
       });
     </script>

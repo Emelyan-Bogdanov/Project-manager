@@ -56,16 +56,41 @@
         color: #7b7d85;
         margin-top: 2px;
       }
-      .file-delete {
-        background: none;
+      .file-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .file-btn {
+        width: 36px;
+        height: 36px;
         border: none;
-        color: #ccc;
-        font-size: 18px;
+        border-radius: 8px;
+        background: #f5f5f5;
+        color: #7b7d85;
+        font-size: 16px;
         cursor: pointer;
-        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         transition: 0.2s;
       }
-      .file-delete:hover { color: #e74c3c; }
+      .file-btn.download:hover {
+        background: #fff0dd;
+        color: #ff9838;
+      }
+      .file-btn.delete:hover {
+        background: #fde8e8;
+        color: #e74c3c;
+      }
+      .file-owner {
+        color: #ff9838;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .file-owner:hover {
+        text-decoration: underline;
+      }
       .upload-area {
         border: 2px dashed #ddd;
         border-radius: 16px;
@@ -139,11 +164,19 @@
             </div>
             <div class="file-info">
               <div class="file-name">{{ f.original_name }}</div>
-              <div class="file-meta">{{ formatSize(f.size) }} &middot; {{ f.created_at }}</div>
+              <div class="file-meta">
+                {{ formatSize(f.size) }} &middot; {{ f.created_at }}
+                &middot; <a :href="'profile.html?user=' + f.uploaded_by" class="file-owner">{{ f.uploader_name || 'Inconnu' }}</a>
+              </div>
             </div>
-            <button class="file-delete" @click="removeFile(f.id)" title="Supprimer">
-              <i class="bi bi-trash"></i>
-            </button>
+            <div class="file-actions">
+              <button class="file-btn download" @click="downloadFile(f)" title="T\u00e9l\u00e9charger">
+                <i class="bi bi-download"></i>
+              </button>
+              <button v-if="f.uploaded_by === currentUserId" class="file-btn delete" @click="removeFile(f.id)" title="Supprimer">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
           </div>
         </div>
       </main>
@@ -157,8 +190,17 @@
           loading: true,
           uploading: false,
           error: "",
+          currentUserId: 0,
         },
         async mounted() {
+          try {
+            const session = await window.electronAPI.checkSession();
+            if (session.loggedIn) {
+              this.currentUserId = session.user.id;
+            }
+          } catch (e) {
+            console.error(e);
+          }
           await this.fetchFiles();
         },
         methods: {
@@ -184,7 +226,7 @@
             try {
               const formData = new FormData();
               formData.append("file", file);
-              formData.append("uploaded_by", "1");
+              formData.append("uploaded_by", String(this.currentUserId));
               const res = await fetch("http://localhost:5000/api/files/upload", {
                 method: "POST",
                 body: formData,
@@ -197,6 +239,12 @@
               this.uploading = false;
               input.value = "";
             }
+          },
+          downloadFile(f) {
+            const a = document.createElement("a");
+            a.href = "http://localhost:5000/api/files/" + f.id + "/download";
+            a.download = f.original_name;
+            a.click();
           },
           async removeFile(id) {
             try {

@@ -1,11 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-
-
-
 contextBridge.exposeInMainWorld('electronAPI', {
     getUsers: () => ipcRenderer.invoke('get-users'),
     getTasks: () => ipcRenderer.invoke('get-tasks'),
     getMessages: () => ipcRenderer.invoke('get-messages'),
-    getWorkspaces: () => ipcRenderer.invoke('get-workspaces')
+    getWorkspaces: () => ipcRenderer.invoke('get-workspaces'),
+    // Ajouter d'autres méthodes si nécessaire
 })

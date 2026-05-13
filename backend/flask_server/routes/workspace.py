@@ -13,6 +13,16 @@ def allWorkspaces():
         "iconPath": workspace.iconPath
     } for workspace in workspaces])
 
+@workspace_bp.route("/api/workspaces")
+def api_all_workspaces():
+    workspaces = Workspace.query.all()
+    return jsonify([{
+        "id": workspace.id,
+        "name": workspace.name,
+        "description": workspace.description,
+        "iconPath": workspace.iconPath
+    } for workspace in workspaces])
+
 @workspace_bp.route("/addworkspace", methods=["POST"])
 def add_workspace():
     data = request.json

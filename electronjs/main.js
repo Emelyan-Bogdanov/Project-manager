@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-
 const fs = require("fs");
 const path = require("path");
+
+// Importer les gestionnaires IPC
+require('./src/main/ipc');
 
 let win;
 
@@ -13,7 +15,7 @@ function MainApp() {
     minWidth: 1400,
     minHeight: 730,
     // movable: false, // position fixe
-    icon: "../assets/imgs/icon.png",
+    icon: path.join(__dirname, "src/assets/imgs/icon.png"),
     title: "Gestionnaire de projets",
     center: true,
     webPreferences: {
@@ -34,21 +36,6 @@ function MainApp() {
 
   ipcMain.on("all-users", () => {
     win.loadFile("src/templates/allUsers.html");
-  });
-
-  ipcMain.handle('get-tasks', async () => {
-    // Implémentez ici la logique pour récupérer les tâches
-    return [{id: 1, title: 'Exemple de tâche'}];
-  });
-
-  ipcMain.handle('get-messages', async () => {
-    // Implémentez ici la logique pour récupérer les messages
-    return [{id: 1, text: 'Exemple de message'}];
-  });
-
-  ipcMain.handle('get-workspaces', async () => {
-    // Implémentez ici la logique pour récupérer les workspaces
-    return [{id: 1, name: 'Exemple de workspace'}];
   });
 
   win.on("closed", () => {

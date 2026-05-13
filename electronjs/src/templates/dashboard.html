@@ -43,16 +43,28 @@
         el: "#app",
         data: {
           userCount: 0,
+          tasks: [],
+          workspaces: [],
+          users: [],
+          messages: []
         },
         mounted() {
-          // executed when app is ready
+          this.loadData();
         },
+        methods: {
+          async loadData() {
+            try {
+              this.users = await window.electronAPI.getUsers();
+              this.tasks = await window.electronAPI.getTasks();
+              this.workspaces = await window.electronAPI.getWorkspaces();
+              this.messages = await window.electronAPI.getMessages();
+              this.userCount = this.users.length;
+            } catch (error) {
+              console.error('Error loading data:', error);
+            }
+          }
+        }
       });
-    </script>
-    <script>
-      setTimeout(() => {
-        document.location.reload();
-      }, 5500);
     </script>
   </body>
 </html>

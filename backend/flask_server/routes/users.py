@@ -15,6 +15,15 @@ def allUsers():
         "email" : user.email,
         # "password" : user.password
     } for user in users])        
+
+@users_bp.route("/api/users")
+def api_all_users():
+    users = User.query.all()
+    return jsonify([{
+        "id": user.id,
+        "username": user.username,
+        "email": user.email
+    } for user in users])
     
 
 

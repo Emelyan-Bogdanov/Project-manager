@@ -16,6 +16,19 @@ def all_tasks():
         "priority": task.priority
     } for task in tasks])
 
+@task_bp.route("/api/tasks")
+def api_all_tasks():
+    tasks = Task.query.all()
+    return jsonify([{
+        "id": task.id,
+        "title": task.title,
+        "tags": task.tags,
+        "deadline": task.deadline,
+        "authorId": task.authorId,
+        "status": task.status,
+        "priority": task.priority
+    } for task in tasks])
+
 @task_bp.route("/addtask", methods=["POST"])
 def add_task():
     data = request.json

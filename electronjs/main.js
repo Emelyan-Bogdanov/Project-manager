@@ -26,8 +26,7 @@ function MainApp() {
     // frame:false // remove top bar buttons [minimize,fullscreen,close]
   });
 
-  // win.loadFile("./window.js")
-  win.loadFile("src/templates/index.html");
+  win.loadFile("src/templates/dashboard.html");
 
   ipcMain.on("open-profile", () => {
     win.loadFile("src/templates/profile.html");

@@ -95,91 +95,32 @@
           MAIN CONTENT
     ========================== -->
 
-      <main class="main-content">
-        <!-- TOPBAR -->
-        <div class="topbar">
-          <div class="topbar-left">
-            <!-- <h3 class="mb-0">Publications</h3> -->
-            <button class="new-task clicked">+ Nouveau tâche</button>
-          </div>
-        </div>
-        <!-- SEARCH -->
-        <div class="search-row">
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="trouver des tâches..." />
-          </div>
-          <div class="filters">
-            <span class="clicked"><i class="bi bi-funnel"></i> Sort by</span>
-            <span class="clicked"><i class="bi bi-sliders"></i> Filters</span>
-            <span class="clicked"><i class="bi bi-eye"></i> Show</span>
-          </div>
-        </div>
-
-        <!-- BOARD -->
-        <div class="board">
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 1"></column-title>
-
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-            <project-card> </project-card>
-          </div>
-
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 2"></column-title>
-
-            <project-card
-              title="title of the project card"
-              description="this is a description of the tassk"
-              views="50"
-              comments-count="55"
-            >
-            </project-card>
-            <project-card></project-card>
-            <project-card></project-card>
-            <project-card></project-card>
-          </div>
-
-          <!-- COLUMN -->
-          <div class="board-column">
-            <column-title text="Category 3"></column-title>
-
-            <project-card> </project-card>
-          </div>
-        </div>
-      </main>
+      <main class="main-content"></main>
     </div>
     <!-- create compos -->
     <script>
       let myapp = new Vue({
-        el: "#app" /* this sould have the selector of the root element */,
-        data: {},
+        el: "#app",
+        data: {
+          userCount: 0,
+        },
+
+        mounted() {
+          fetch("http://127.0.0.1:8080/howmanyusers")
+            .then((response) => response.text())
+            .then((data) => {
+              this.userCount = data;
+            })
+            .catch((error) => {
+              console.error("Error fetching users:", error);
+            });
+        },
       });
     </script>
     <script>
       setTimeout(() => {
         document.location.reload();
       }, 58500);
-    </script>
-    <!-- get users -->
-    <script>
-      fetch("http://127.0.0.1:8080/howmanyusers")
-        .then((response) => response.text())
-        .then((data) => {
-          document.getElementById("nUser").innerHTML = data;
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching users:",
-            error,
-            " \nMybe you have to turn on flask server",
-          );
-        });
     </script>
   </body>
 </html>

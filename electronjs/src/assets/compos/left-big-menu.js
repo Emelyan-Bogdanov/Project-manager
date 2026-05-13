@@ -7,7 +7,21 @@ Vue.component("left-big-menu", {
     },
   },
   data: function () {
-    return {};
+    return {
+      members: [],
+    };
+  },
+  async mounted() {
+    try {
+      const users = await window.electronAPI.getUsers();
+      this.members = users.map(u => ({
+        id: u.id,
+        name: u.username,
+        url: `https://i.pravatar.cc/100?img=${(u.id % 70) || 1}`,
+      }));
+    } catch (e) {
+      console.error("Error loading sidebar members:", e);
+    }
   },
   methods: {
     logout: function () {
@@ -62,14 +76,12 @@ Vue.component("left-big-menu", {
       <sidebar-section-header title="Membres de projet"></sidebar-section-header>
 
       <div class="members">
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
-        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item
+          v-for="m in members"
+          :key="m.id"
+          :url="m.url"
+          :name="m.name"
+        ></sidebar-member-item>
       </div>
 
       <div class="sidebar-logout" style="margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">

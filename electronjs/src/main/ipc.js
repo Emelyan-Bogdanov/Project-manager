@@ -1,8 +1,53 @@
-const { ipcMain } = require('electron');
+const { ipcMain, app } = require('electron');
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 
-// Configuration de l'URL de base du backend Flask
 const FLASK_BASE_URL = 'http://localhost:5000';
+
+function getSessionFile() {
+    return path.join(app.getPath('userData'), 'user-session.json');
+}
+
+ipcMain.handle('login', async (event, { username, password, rememberMe }) => {
+    try {
+        if (!username || !password) {
+            return { success: false, error: "Nom d'utilisateur et mot de passe requis" };
+        }
+        const response = await fetch(`${FLASK_BASE_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+        if (!response.ok) {
+            return { success: false, error: 'Identifiants invalides' };
+        }
+        const user = await response.json();
+        const session = { user, rememberMe, savedAt: Date.now() };
+        fs.writeFileSync(getSessionFile(), JSON.stringify(session));
+        return { success: true, user };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('check-session', () => {
+    try {
+        const raw = fs.readFileSync(getSessionFile(), 'utf8');
+        const session = JSON.parse(raw);
+        if (session.rememberMe && session.user) {
+            return { loggedIn: true, user: session.user };
+        }
+        return { loggedIn: false };
+    } catch {
+        return { loggedIn: false };
+    }
+});
+
+ipcMain.handle('logout', () => {
+    try { fs.unlinkSync(getSessionFile()); } catch {}
+    return { success: true };
+});
 
 ipcMain.handle('get-users', async () => {
     try {

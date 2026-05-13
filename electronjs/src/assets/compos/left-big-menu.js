@@ -1,77 +1,83 @@
-// create the component
 Vue.component("left-big-menu", {
   name: "left-big-menu",
   props: {
-    compName:{
-        type:String,
-        default:"vecteurs"
-    }
+    compName: {
+      type: String,
+      default: "Vecteurs",
+    },
   },
-
   data: function () {
-    // unlike app , the compo's data has to be a function
     return {};
   },
-  methods: {},
+  methods: {
+    logout: function () {
+      if (window.electronAPI && window.electronAPI.logout) {
+        window.electronAPI.logout().then(() => {
+          window.electronAPI.navigate("src/templates/auth/login.html");
+        });
+      }
+    },
+  },
   template: `
-    
     <div>
-          <!-- logo pour la socièté -->
-          <company-logo :compName="compName"></company-logo>
+      <company-logo :compName="compName"></company-logo>
 
-          <!-- MENU -->
-          <div class="sidebar-title">Menu</div>
+      <div class="sidebar-title">Menu</div>
 
-          <side-menu-button
-            biclass="bi-house-fill"
-            count="0"
-            span-text="Tableau de bord"
-            url="dashboard.html"
-          >
-          </side-menu-button>
+      <side-menu-button
+        biclass="bi-house-fill"
+        count="0"
+        span-text="Tableau de bord"
+        url="dashboard.html"
+      ></side-menu-button>
 
-          <side-menu-button 
-            biclass="bi-check2-square" 
-            span-text="Tâches"
-            url="tasks.html">
-          </side-menu-button>
+      <side-menu-button
+        biclass="bi-check2-square"
+        span-text="T\u00e2ches"
+        url="tasks.html"
+      ></side-menu-button>
 
-          <!-- PROJECTS -->
+      <sidebar-section-header :has-plus="false"></sidebar-section-header>
 
-          <sidebar-section-header :has-plus="false"></sidebar-section-header>
+      <div class="tools">
+        <side-menu-button
+          biclass="bi-stack"
+          span-text="Publications"
+          url="dashboard.html"
+        ></side-menu-button>
 
-          <div class="tools">
-            <side-menu-button
-              biclass="bi-stack"
-              span-text="Publications"
-              url="dashboard.html"
-            ></side-menu-button>
-            
-            <side-menu-button
-              biclass="bi-files"
-              span-text="Fichiers"
-            ></side-menu-button>
+        <side-menu-button
+          biclass="bi-files"
+          span-text="Fichiers"
+        ></side-menu-button>
 
-            <side-menu-button
-              biclass="bi-people"
-              span-text="Utilisateurs"
-              url="allUsers.html"
-            ></side-menu-button>
+        <side-menu-button
+          biclass="bi-people"
+          span-text="Utilisateurs"
+          url="allUsers.html"
+        ></side-menu-button>
+      </div>
+
+      <sidebar-section-header title="Membres de projet"></sidebar-section-header>
+
+      <div class="members">
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+        <sidebar-member-item></sidebar-member-item>
+      </div>
+
+      <div class="sidebar-logout" style="margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
+        <a href="#" class="menu-link" @click.prevent="logout">
+          <div class="menu-left">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>D\u00e9connexion</span>
           </div>
-
-          <!-- MEMBERS -->
-          <sidebar-section-header title="Membres de projet">
-          </sidebar-section-header>
-
-          <div class="members">
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-          </div>
-        </div>`,
+        </a>
+      </div>
+    </div>`,
 });

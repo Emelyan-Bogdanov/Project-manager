@@ -2,19 +2,30 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
-// Importer les gestionnaires IPC
 require('./src/main/ipc');
 
 let win;
 
-// main window
+function getSessionFile() {
+    return path.join(app.getPath('userData'), 'user-session.json');
+}
+
+function getStartPage() {
+    try {
+        const session = JSON.parse(fs.readFileSync(getSessionFile(), 'utf8'));
+        if (session.rememberMe && session.user) {
+            return "src/templates/dashboard.html";
+        }
+    } catch {}
+    return "src/templates/auth/login.html";
+}
+
 function MainApp() {
   win = new BrowserWindow({
     width: 1400,
     height: 800,
     minWidth: 1400,
     minHeight: 730,
-    // movable: false, // position fixe
     icon: path.join(__dirname, "src/assets/imgs/icon.png"),
     title: "Gestionnaire de projets",
     center: true,
@@ -22,13 +33,11 @@ function MainApp() {
       nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: false,
-      preload: path.join(__dirname, "preload.js"), // use a preload script
+      preload: path.join(__dirname, "preload.js"),
     },
-
-    // frame:false // remove top bar buttons [minimize,fullscreen,close]
   });
 
-  win.loadFile("src/templates/dashboard.html");
+  win.loadFile(getStartPage());
 
   ipcMain.on("open-profile", () => {
     win.loadFile("src/templates/profile.html");
@@ -36,6 +45,10 @@ function MainApp() {
 
   ipcMain.on("all-users", () => {
     win.loadFile("src/templates/allUsers.html");
+  });
+
+  ipcMain.on("navigate", (event, page) => {
+    win.loadFile(page);
   });
 
   win.on("closed", () => {
@@ -50,8 +63,3 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-
-// if profile username clicked => goto profile infos
-
-// do something before closing the window
-app.on("before-quit", () => {});

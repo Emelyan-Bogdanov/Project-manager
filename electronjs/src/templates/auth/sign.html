@@ -4,93 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
+    <link rel="stylesheet" href="../../assets/css/all.css" />
+    <link rel="stylesheet" href="../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <style>
         body {
+            background: linear-gradient(135deg, #171922 0%, #2d2f36 100%);
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
-        .signup-container {
+        .auth-container {
             background: white;
-            padding: 30px 40px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 420px;
+        }
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .auth-logo .logo-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ff8c2f;
+            box-shadow: 0 0 0 4px rgba(255, 140, 47, 0.15), 0 0 0 8px rgba(255, 140, 47, 0.08);
+        }
+        .auth-logo h4 {
+            margin: 0;
+            font-weight: 700;
+            color: #1d2340;
+        }
+        .auth-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1d2340;
+        }
+        .auth-subtitle {
+            color: #7b7d85;
+            font-size: 14px;
+            margin-bottom: 28px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
         }
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
             box-sizing: border-box;
         }
-        .error {
-            color: red;
-            font-size: 12px;
+        .form-group input:focus {
+            border-color: #ff9838;
         }
-        .btn {
-            background-color: #5cb85c;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
+        .btn-signup {
             width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: #ff9838;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .btn:hover {
-            background-color: #4cae4c;
+        .btn-signup:hover {
+            background: #e8882e;
         }
-        .login-link {
+        .auth-footer {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 14px;
+            color: #7b7d85;
         }
-        .login-link a {
-            color: #5cb85c;
+        .auth-footer a {
+            color: #ff9838;
             text-decoration: none;
+            font-weight: 600;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="signup-container">
-        <h2>Inscription</h2>
-        <form onsubmit="event.preventDefault();">
+    <div class="auth-container" id="app">
+        <div class="auth-logo">
+            <div class="logo-circle"></div>
+            <h4>ProjectManager</h4>
+        </div>
+        <div class="auth-title">Inscription</div>
+        <div class="auth-subtitle">Créez votre compte pour commencer</div>
+
+        <div class="error-msg" :class="{ show: error }">{{ error }}</div>
+
+        <form @submit.prevent="signup">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" required>
-                <div class="error" id="usernameError">Ce champ est requis.</div>
+                <input type="text" id="username" v-model="username" placeholder="Choisissez un nom d'utilisateur" required />
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-                <div class="error" id="emailError">Email invalide.</div>
+                <input type="email" id="email" v-model="email" placeholder="Entrez votre email" required />
             </div>
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
-                <div class="error" id="passwordError">Minimum 6 caractères.</div>
+                <input type="password" id="password" v-model="password" placeholder="Minimum 6 caractères" required />
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirmer le mot de passe</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-                <div class="error" id="confirmError">Les mots de passe ne correspondent pas.</div>
+                <input type="password" id="confirmPassword" v-model="confirmPassword" placeholder="Répétez le mot de passe" required />
             </div>
-            <button type="submit" class="btn">S'inscrire</button>
+            <button type="submit" class="btn-signup" :disabled="loading">
+                <span v-if="loading">Inscription...</span>
+                <span v-else>Créer mon compte</span>
+            </button>
         </form>
-        <div class="login-link">
+
+        <div class="auth-footer">
             Déjà un compte ? <a href="login.html">Connectez-vous</a>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                username: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                loading: false,
+                error: "",
+            },
+            methods: {
+                async signup() {
+                    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
+                        this.error = "Veuillez remplir tous les champs";
+                        return;
+                    }
+                    if (this.password.length < 6) {
+                        this.error = "Le mot de passe doit contenir au moins 6 caractères";
+                        return;
+                    }
+                    if (this.password !== this.confirmPassword) {
+                        this.error = "Les mots de passe ne correspondent pas";
+                        return;
+                    }
+                    this.loading = true;
+                    this.error = "";
+                    try {
+                        const result = await window.electronAPI.login({
+                            username: this.username,
+                            password: this.password,
+                            rememberMe: true,
+                        });
+                        if (result.success) {
+                            window.electronAPI.navigate("src/templates/dashboard.html");
+                        } else {
+                            this.error = result.error || "Erreur lors de l'inscription";
+                        }
+                    } catch (err) {
+                        this.error = "Erreur de connexion au serveur";
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+            },
+        });
+    </script>
 </body>
 </html>

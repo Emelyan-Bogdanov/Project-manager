@@ -43,9 +43,12 @@
             type="text"
             id="username"
             v-model="username"
+            @blur="checkUsername"
             placeholder="Choisissez un nom d'utilisateur"
+            :class="{ 'is-invalid': usernameTaken }"
             required
           />
+          <small v-if="usernameTaken" class="field-error">Ce nom d'utilisateur est deja pris</small>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
@@ -53,9 +56,12 @@
             type="email"
             id="email"
             v-model="email"
+            @blur="checkEmail"
             placeholder="Entrez votre email"
+            :class="{ 'is-invalid': emailTaken }"
             required
           />
+          <small v-if="emailTaken" class="field-error">Cet email est deja utilise</small>
         </div>
         <div class="form-group">
           <label for="password">Mot de passe</label>
@@ -143,6 +149,9 @@
           tagsInput: "",
           loading: false,
           error: "",
+          usernameTaken: false,
+          emailTaken: false,
+          usersCache: null,
         },
         computed: {
           tags() {
@@ -164,6 +173,28 @@
           },
         },
         methods: {
+          async loadUsers() {
+            if (!this.usersCache) {
+              try {
+                this.usersCache = await window.electronAPI.getUsers();
+              } catch { this.usersCache = []; }
+            }
+            return this.usersCache;
+          },
+          async checkUsername() {
+            if (!this.username) { this.usernameTaken = false; return; }
+            const users = await this.loadUsers();
+            this.usernameTaken = users.some(
+              (u) => u.username.toLowerCase() === this.username.toLowerCase()
+            );
+          },
+          async checkEmail() {
+            if (!this.email) { this.emailTaken = false; return; }
+            const users = await this.loadUsers();
+            this.emailTaken = users.some(
+              (u) => u.email.toLowerCase() === this.email.toLowerCase()
+            );
+          },
           async signup() {
             if (
               !this.name ||
@@ -182,6 +213,16 @@
             }
             if (this.password !== this.confirmPassword) {
               this.error = "Les mots de passe ne correspondent pas";
+              return;
+            }
+            await this.checkUsername();
+            await this.checkEmail();
+            if (this.usernameTaken) {
+              this.error = "Ce nom d'utilisateur est deja pris";
+              return;
+            }
+            if (this.emailTaken) {
+              this.error = "Cet email est deja utilise";
               return;
             }
             this.loading = true;

@@ -109,6 +109,17 @@ body {
 .error-msg.show {
   display: block;
 }
+
+.form-group input.is-invalid {
+  border-color: #e74c3c;
+}
+
+.field-error {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
 .profile-preview {
   width: 86px;
   height: 86px;

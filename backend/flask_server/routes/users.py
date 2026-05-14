@@ -60,14 +60,18 @@ def deleteUser(userid:int):
 def add_user():
     data = request.json
     from ..modules import db
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip()
+    password = data.get("password") or ""
+    name = (data.get("name") or username).strip()
+    tags = data.get("tags") or []
+    if not username or not email or not password:
+        return jsonify({"success": False, "error": "Username, email and password are required"}), 400
+    if User.query.filter_by(username=username).first():
+        return jsonify({"success": False, "error": "Ce nom d'utilisateur est deja pris"}), 409
+    if User.query.filter_by(email=email).first():
+        return jsonify({"success": False, "error": "Cet email est deja utilise"}), 409
     try:
-        username = (data.get("username") or "").strip()
-        email = (data.get("email") or "").strip()
-        password = data.get("password") or ""
-        name = (data.get("name") or username).strip()
-        tags = data.get("tags") or []
-        if not username or not email or not password:
-            return jsonify({"success": False, "error": "Username, email and password are required"}), 400
         user = User(
             name=name,
             username=username,
@@ -90,6 +94,12 @@ def update_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"success": False, "error": "User not found"}), 404
+    username = data.get("username")
+    email = data.get("email")
+    if username and User.query.filter(User.id != user_id, User.username == username).first():
+        return jsonify({"success": False, "error": "Ce nom d'utilisateur est deja pris"}), 409
+    if email and User.query.filter(User.id != user_id, User.email == email).first():
+        return jsonify({"success": False, "error": "Cet email est deja utilise"}), 409
     try:
         for field in ["name", "username", "email", "avatar", "location"]:
             if field in data:

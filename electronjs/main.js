@@ -70,7 +70,8 @@ function MainApp() {
   ipcMain.on("navigate", (event, page) => {
     const [filePath, queryString] = page.split('?');
     const query = queryString ? Object.fromEntries(new URLSearchParams(queryString)) : {};
-    win.loadFile(filePath, { query });
+    const fullPath = filePath.startsWith("src/templates/") ? filePath : "src/templates/" + filePath;
+    win.loadFile(fullPath, { query });
   });
 
   win.on("closed", () => {

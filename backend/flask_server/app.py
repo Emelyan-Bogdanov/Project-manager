@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from .modules import db, seed_database
 from flask_cors import CORS
+from sqlalchemy import text
 
 def create_app() :
     app = Flask(__name__)
@@ -13,6 +14,11 @@ def create_app() :
 
     with app.app_context() :
         db.create_all()
+        try:
+            db.session.execute(text("ALTER TABLE task ADD COLUMN workspaceId INTEGER DEFAULT NULL"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         # seed_database(db)
 
     from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp

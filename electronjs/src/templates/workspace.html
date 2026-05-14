@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../assets/css/index.css" />
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../assets/css/myframework.css" />
+    <link rel="stylesheet" href="../assets/css/task-editor.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="../assets/compos/tag.js"></script>
@@ -17,6 +18,7 @@
     <script src="../assets/compos/column-title.js"></script>
     <script src="../assets/compos/comp-logo.js"></script>
     <script src="../assets/compos/left-big-menu.js"></script>
+    <script src="../assets/compos/task-slide-panel.js"></script>
 
     <link
       rel="stylesheet"
@@ -37,17 +39,133 @@
             </a>
             <h3 class="mb-0">{{ workspace.name }}</h3>
           </div>
-        </div>
-
-        <div class="workspace-detail" v-if="workspace">
-          <div class="detail-card">
-            <h4>Description</h4>
-            <p>{{ workspace.description || "Aucune description" }}</p>
+          <div class="topbar-right" v-if="workspace">
+            <button class="new-task clicked" @click="openNewTask">
+              <i class="bi bi-plus-lg"></i> Nouvelle tache
+            </button>
           </div>
         </div>
-        <div class="loading" v-else-if="loading">Chargement...</div>
-        <div class="loading" v-else>Projet introuvable</div>
+
+        <div class="workspace-description" v-if="workspace">
+          <p>{{ workspace.description || "Aucune description" }}</p>
+        </div>
+
+        <div v-if="loading" class="text-center my-5">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+
+        <div v-else-if="workspace" class="board">
+          <div class="board-column" v-for="col in columns" :key="col.name">
+            <column-title :text="col.name" :count="col.tasks.length"></column-title>
+
+            <project-card
+              v-for="task in col.tasks"
+              :key="task.id"
+              :title="task.title"
+              :description="plainText(task.description)"
+              :tags="task.tags"
+              :deadline="task.deadline"
+              :views="task.views"
+              :comments-count="task.commentsCount"
+              :urls="task.urls"
+              :author="task.author"
+              :image="task.image"
+              @select="openTask(task.id)"
+            ></project-card>
+          </div>
+        </div>
+
+        <div v-else class="text-center my-5 py-5">
+          <p class="text-muted">Projet introuvable</p>
+        </div>
       </main>
+
+      <div class="modal-overlay" v-if="showTaskModal" @click.self="showTaskModal = false">
+        <div class="modal-card task-modal-card">
+          <div class="modal-header">
+            <h3>Nouvelle tache</h3>
+            <button class="modal-close" @click="showTaskModal = false">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Titre</label>
+              <input type="text" v-model="newTask.title" placeholder="Titre de la tache" />
+            </div>
+            <div class="form-group">
+              <label>Type de tache</label>
+              <select v-model="newTask.taskType">
+                <option value="basic">Simple</option>
+                <option value="advanced">Avancee</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Description / Notes</label>
+              <div class="editor-toolbar">
+                <button type="button" title="Bold" @click="formatText('bold')"><i class="bi bi-type-bold"></i></button>
+                <button type="button" title="Italic" @click="formatText('italic')"><i class="bi bi-type-italic"></i></button>
+                <button type="button" title="Underline" @click="formatText('underline')"><i class="bi bi-type-underline"></i></button>
+              </div>
+              <div
+                ref="descriptionEditor"
+                class="rich-editor"
+                contenteditable="true"
+                @input="syncDescription"
+              ></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label>Date limite</label>
+                <input type="text" v-model="newTask.deadline" placeholder="ex: 15 Juin" />
+              </div>
+              <div class="form-group flex-1">
+                <label>Priorite</label>
+                <select v-model="newTask.priority">
+                  <option :value="1">Basse</option>
+                  <option :value="2">Moyenne</option>
+                  <option :value="3">Haute</option>
+                </select>
+              </div>
+              <div class="form-group flex-1">
+                <label>Statut</label>
+                <select v-model="newTask.status">
+                  <option value="todo">A faire</option>
+                  <option value="in_progress">En cours</option>
+                  <option value="done">Termine</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tags (separes par des virgules)</label>
+              <input type="text" v-model="newTask.tagsInput" placeholder="ex: Frontend, UI, React" />
+            </div>
+            <div class="form-group">
+              <label>URLs (une par ligne)</label>
+              <textarea v-model="newTask.urlsInput" placeholder="https://example.com" rows="2"></textarea>
+            </div>
+            <div class="form-group" v-if="newTask.taskType === 'advanced'">
+              <label>Images</label>
+              <input type="file" accept="image/*" multiple @change="selectImages" />
+            </div>
+            <div class="form-group" v-if="newTask.taskType === 'advanced'">
+              <label>Fichiers</label>
+              <input type="file" multiple @change="selectFiles" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="showTaskModal = false">Annuler</button>
+            <button class="btn-submit" @click="createTask">Creer la tache</button>
+          </div>
+        </div>
+      </div>
+
+      <task-slide-panel
+        :task-id="selectedTaskId"
+        :visible="showTaskPanel"
+        @close="showTaskPanel = false; selectedTaskId = null"
+        @saved="showTaskPanel = false; selectedTaskId = null; fetchTasks()"
+      ></task-slide-panel>
     </div>
 
     <style>
@@ -65,54 +183,155 @@
       .back-link:hover {
         color: #5a52e0;
       }
-      .workspace-detail {
+      .workspace-description {
         background: white;
         border-radius: 16px;
-        padding: 28px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       }
-      .detail-card h4 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0 0 12px;
-        color: #333;
-      }
-      .detail-card p {
+      .workspace-description p {
+        margin: 0;
         font-size: 14px;
         color: #555;
         line-height: 1.6;
-        margin: 0;
-      }
-      .loading {
-        text-align: center;
-        padding: 60px 20px;
-        font-size: 16px;
-        color: #888;
       }
     </style>
 
     <script>
+      function emptyTask() {
+        return {
+          title: "",
+          description: "",
+          taskType: "basic",
+          deadline: "",
+          status: "todo",
+          priority: 1,
+          tagsInput: "",
+          urlsInput: "",
+          images: [],
+          files: [],
+        };
+      }
+
       new Vue({
         el: "#app",
         data: {
+          workspaceId: null,
           workspace: null,
           loading: true,
+          tasks: [],
+          showTaskModal: false,
+          showTaskPanel: false,
+          selectedTaskId: null,
+          newTask: emptyTask(),
+        },
+        computed: {
+          columns() {
+            const groups = { todo: [], in_progress: [], done: [] };
+            this.tasks.forEach((t) => {
+              const key = groups[t.status] ? t.status : "todo";
+              groups[key].push(t);
+            });
+            return [
+              { name: "A faire", status: "todo", tasks: groups.todo },
+              { name: "En cours", status: "in_progress", tasks: groups.in_progress },
+              { name: "Termine", status: "done", tasks: groups.done },
+            ];
+          },
         },
         async mounted() {
           const params = new URLSearchParams(window.location.search);
           const id = params.get("id");
           if (id) {
-            try {
-              this.workspace = await window.electronAPI.getWorkspace(Number(id));
-            } catch (e) {
-              console.error(e);
-            }
+            this.workspaceId = Number(id);
+            await Promise.all([this.fetchWorkspace(), this.fetchTasks()]);
           }
           this.loading = false;
         },
         methods: {
+          async fetchWorkspace() {
+            try {
+              this.workspace = await window.electronAPI.getWorkspace(this.workspaceId);
+            } catch (e) {
+              console.error(e);
+            }
+          },
+          async fetchTasks() {
+            try {
+              this.tasks = await window.electronAPI.getWorkspaceTasks(this.workspaceId);
+            } catch (e) {
+              console.error(e);
+            }
+          },
           goBack() {
             window.electronAPI.navigate("dashboard.html");
+          },
+          openNewTask() {
+            this.showTaskModal = true;
+            this.newTask = emptyTask();
+            this.$nextTick(() => {
+              if (this.$refs.descriptionEditor) this.$refs.descriptionEditor.innerHTML = "";
+            });
+          },
+          syncDescription() {
+            this.newTask.description = this.$refs.descriptionEditor.innerHTML;
+          },
+          formatText(command) {
+            document.execCommand(command, false, null);
+            this.syncDescription();
+          },
+          readFiles(fileList) {
+            return Promise.all([...fileList].map((file) => new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+              reader.readAsDataURL(file);
+            })));
+          },
+          async selectImages(event) {
+            const files = await this.readFiles(event.target.files);
+            this.newTask.images = files.map((file) => file.data);
+          },
+          async selectFiles(event) {
+            this.newTask.files = await this.readFiles(event.target.files);
+          },
+          async createTask() {
+            if (!this.newTask.title.trim()) return;
+            const session = await window.electronAPI.checkSession();
+            const authorId = session.loggedIn && session.user ? session.user.id : null;
+            const tags = this.newTask.tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
+            const urls = this.newTask.urlsInput.split("\n").map((u) => u.trim()).filter(Boolean);
+            try {
+              await window.electronAPI.createTask({
+                title: this.newTask.title,
+                description: this.newTask.description,
+                deadline: this.newTask.deadline || "N/A",
+                status: this.newTask.status,
+                taskType: this.newTask.taskType,
+                tags: JSON.stringify(tags),
+                urls: JSON.stringify(urls),
+                images: JSON.stringify(this.newTask.images),
+                files: JSON.stringify(this.newTask.files),
+                priority: this.newTask.priority,
+                authorId,
+                workspaceId: this.workspaceId,
+              });
+              this.showTaskModal = false;
+              await this.fetchTasks();
+            } catch (e) {
+              console.error(e);
+            }
+          },
+          openTask(id) {
+            if (id) {
+              this.selectedTaskId = id;
+              this.showTaskPanel = true;
+            }
+          },
+          plainText(html) {
+            const div = document.createElement("div");
+            div.innerHTML = html || "";
+            return div.textContent || div.innerText || "";
           },
         },
       });

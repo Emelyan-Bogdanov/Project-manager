@@ -31,7 +31,8 @@ def task_to_dict(task):
         "authorUsername": author.username if author else "",
         "authorAvatar": author.avatar if author else "",
         "status": task.status,
-        "priority": task.priority
+        "priority": task.priority,
+        "workspaceId": task.workspaceId
     }
 
 @task_bp.route("/tasks")
@@ -42,6 +43,11 @@ def all_tasks():
 @task_bp.route("/api/tasks")
 def api_all_tasks():
     tasks = Task.query.all()
+    return jsonify([task_to_dict(t) for t in tasks])
+
+@task_bp.route("/api/workspaces/<int:workspace_id>/tasks")
+def workspace_tasks(workspace_id):
+    tasks = Task.query.filter_by(workspaceId=workspace_id).all()
     return jsonify([task_to_dict(t) for t in tasks])
 
 @task_bp.route("/addtask", methods=["POST"])
@@ -58,7 +64,8 @@ def add_task():
         files=data.get("files", "[]"),
         taskType=data.get("taskType", "basic"),
         priority=data.get("priority", 1),
-        status=data.get("status", "todo")
+        status=data.get("status", "todo"),
+        workspaceId=data.get("workspaceId")
     )
     return jsonify({"id": task.id, "task": task_to_dict(task), "message": "Task added"})
 

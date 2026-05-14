@@ -90,6 +90,11 @@ ipcMain.handle('get-workspace', async (event, id) => {
     catch (e) { console.error(e); return null; }
 });
 
+ipcMain.handle('get-workspace-tasks', async (event, id) => {
+    try { return await apiFetch(`/api/workspaces/${id}/tasks`); }
+    catch (e) { console.error(e); return []; }
+});
+
 ipcMain.handle('get-files', async () => {
     try { return await apiFetch('/api/files'); }
     catch (e) { console.error(e); return []; }

@@ -254,9 +254,11 @@ Vue.component("task-slide-panel", {
 
           <div class="slide-links" v-if="task.files && task.files.length">
             <h4>Files</h4>
-            <a v-for="file in task.files" :key="file.name" :href="file.data" :download="file.name" class="file-link">
-              <i class="bi bi-file-earmark-arrow-down"></i> {{ file.name }}
-            </a>
+            <template v-for="(file, idx) in task.files">
+              <a v-if="file" :key="idx" :href="file.data" :download="file.name" class="file-link">
+                <i class="bi bi-file-earmark-arrow-down"></i> {{ file.name }}
+              </a>
+            </template>
           </div>
         </div>
 

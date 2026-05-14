@@ -35,7 +35,7 @@ async function checkUsersExist() {
     }
 }
 
-function MainApp() {
+async function MainApp() {
   win = new BrowserWindow({
     width: 1400,
     height: 800,
@@ -56,7 +56,7 @@ function MainApp() {
   win.loadFile(startPage);
 
   if (startPage === "src/templates/dashboard.html") {
-    checkUsersExist();
+    await checkUsersExist();
   }
 
   ipcMain.on("open-profile", () => {

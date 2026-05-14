@@ -372,27 +372,24 @@
             const authorId = session.loggedIn && session.user ? session.user.id : null;
             const tags = this.newTask.tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
             const urls = this.newTask.urlsInput.split("\n").map((u) => u.trim()).filter(Boolean);
-            try {
-              await window.electronAPI.createTask({
-                title: this.newTask.title,
-                description: this.newTask.description,
-                deadline: this.newTask.deadline || "N/A",
-                status: this.newTask.status,
-                taskType: this.newTask.taskType,
-                tags: JSON.stringify(tags),
-                urls: JSON.stringify(urls),
-                images: JSON.stringify(this.newTask.images),
-                files: JSON.stringify(this.newTask.files),
-                priority: this.newTask.priority,
-                authorId,
-                workspaceId: this.newTask.workspaceId,
-                reminder: this.newTask.reminder,
-              });
-              this.showTaskModal = false;
-              await this.fetchTasks();
-            } catch (e) {
-              console.error(e);
-            }
+            const result = await window.electronAPI.createTask({
+              title: this.newTask.title,
+              description: this.newTask.description,
+              deadline: this.newTask.deadline || "N/A",
+              status: this.newTask.status,
+              taskType: this.newTask.taskType,
+              tags: JSON.stringify(tags),
+              urls: JSON.stringify(urls),
+              images: JSON.stringify(this.newTask.images),
+              files: JSON.stringify(this.newTask.files),
+              priority: this.newTask.priority,
+              authorId,
+              workspaceId: this.newTask.workspaceId,
+              reminder: this.newTask.reminder,
+            });
+            if (result.error) { alert(result.error); return; }
+            this.showTaskModal = false;
+            await this.fetchTasks();
           },
           openTask(id) {
             if (id) {

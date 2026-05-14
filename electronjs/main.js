@@ -20,6 +20,21 @@ function getStartPage() {
     return "src/templates/auth/login.html";
 }
 
+async function checkUsersExist() {
+    try {
+        const res = await fetch('http://localhost:5000/howmanyusers');
+        if (res.ok) {
+            const count = parseInt(await res.text(), 10);
+            if (count === 0) {
+                try { fs.unlinkSync(getSessionFile()); } catch {}
+                win.loadFile("src/templates/auth/login.html");
+            }
+        }
+    } catch {
+        console.log('Server unreachable, keeping session');
+    }
+}
+
 function MainApp() {
   win = new BrowserWindow({
     width: 1400,
@@ -37,7 +52,12 @@ function MainApp() {
     },
   });
 
-  win.loadFile(getStartPage());
+  const startPage = getStartPage();
+  win.loadFile(startPage);
+
+  if (startPage === "src/templates/dashboard.html") {
+    checkUsersExist();
+  }
 
   ipcMain.on("open-profile", () => {
     win.loadFile("src/templates/profile.html");

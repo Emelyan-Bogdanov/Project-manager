@@ -30,34 +30,78 @@
       </aside>
 
       <main class="main-content users-page">
-        <div class="topbar">
-          <div class="topbar-left">
-            <h3 class="mb-0">Utilisateurs</h3>
-          </div>
-        </div>
+        <div class="users-split">
+          <div class="users-list-panel">
+            <div class="topbar">
+              <div class="topbar-left">
+                <h3 class="mb-0">Utilisateurs</h3>
+              </div>
+            </div>
 
-        <div class="search-row">
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" v-model="searchQuery" placeholder="Rechercher un utilisateur..." />
-          </div>
-        </div>
+            <div class="search-row">
+              <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" v-model="searchQuery" placeholder="Rechercher un utilisateur..." />
+              </div>
+            </div>
 
-        <div v-if="loading" class="text-center my-5">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Chargement...</span>
-          </div>
-        </div>
+            <div v-if="loading" class="text-center my-5">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </div>
 
-        <div v-if="!loading" class="row g-4">
-          <user-card-item
-            v-for="user in filteredUsers"
-            :key="user.id || user.username"
-            :username="user.username"
-            :tags="user.tags"
-            :location="user.location"
-            :profile="user.avatar"
-          ></user-card-item>
+            <div v-if="!loading" class="users-list">
+              <user-card-item
+                v-for="user in filteredUsers"
+                :key="user.id || user.username"
+                :username="user.username"
+                :tags="user.tags"
+                :location="user.location"
+                :profile="user.avatar"
+                :selected="selectedUser && selectedUser.id === user.id"
+                @select="selectUser(user)"
+              ></user-card-item>
+            </div>
+          </div>
+
+          <div class="user-detail-panel" v-if="selectedUser">
+            <div class="detail-header">
+              <button class="detail-close" @click="selectedUser = null"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="detail-body">
+              <div class="detail-avatar-wrapper">
+                <img :src="selectedUser.avatar" class="detail-avatar" />
+              </div>
+              <h2 class="detail-name">{{ selectedUser.username }}</h2>
+              <p class="detail-role">Membre</p>
+
+              <div class="detail-info">
+                <div class="detail-info-item" v-if="selectedUser.email">
+                  <i class="bi bi-envelope"></i>
+                  <span>{{ selectedUser.email }}</span>
+                </div>
+                <div class="detail-info-item" v-if="selectedUser.location">
+                  <i class="bi bi-geo-alt"></i>
+                  <span>{{ selectedUser.location }}</span>
+                </div>
+              </div>
+
+              <div class="detail-section" v-if="selectedUser.tags && selectedUser.tags.length">
+                <h5>Compétences</h5>
+                <div class="detail-tags">
+                  <span class="tag" v-for="tag in selectedUser.tags">{{ tag }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="user-detail-panel detail-empty" v-else>
+            <div class="detail-empty-state">
+              <i class="bi bi-person-circle"></i>
+              <p>Sélectionnez un utilisateur pour voir ses informations</p>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -70,6 +114,7 @@
             searchQuery: "",
             loading: true,
             users: [],
+            selectedUser: null,
           };
         },
         computed: {
@@ -78,7 +123,7 @@
             if (!q) return this.users;
             return this.users.filter((user) =>
               user.username.toLowerCase().includes(q) ||
-              user.location.toLowerCase().includes(q) ||
+              (user.location && user.location.toLowerCase().includes(q)) ||
               user.tags.some(tag => tag.toLowerCase().includes(q))
             );
           },
@@ -98,12 +143,16 @@
               this.loading = false;
             }
           },
+          selectUser(user) {
+            this.selectedUser = user;
+          },
           normalizeUser(user) {
             const username = user.username || user.name || "Utilisateur";
             const displayName = user.name || username;
             return {
               id: user.id,
               username: displayName,
+              email: user.email || "",
               tags: this.normalizeTags(user.tags),
               location: user.location || user.email || "",
               avatar: user.avatar || user.profile || this.getAvatarUrl(displayName),

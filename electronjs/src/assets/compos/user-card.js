@@ -1,4 +1,3 @@
-// create the component
 Vue.component("user-card-item", {
   name: "user-card-item",
   props: {
@@ -18,33 +17,30 @@ Vue.component("user-card-item", {
       type: Array,
       default: () => ["tag1", "tag2", "tag1"],
     },
+    selected: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  data: function () {
-    // unlike app , the compo's data has to be a function
-    return {};
+  methods: {
+    handleClick() {
+      this.$emit("select");
+    },
   },
-  methods: {},
   template: `
-    <div class="col-lg-4 col-md-6 user-item">
-            <div class="user-card">
-            <div class="user-top">
-                <img
-                :src="profile"
-                class="user-img"
-            />
-
-            <div>
-              <div class="user-name">
-                <p>{{username}}</p>
-              </div>
-              <div class="user-location">{{location}}</div>
-            </div>
-            </div>
-
-            <div class="tags">
-                <span class="tag" v-for="tag in tags">{{tag}}</span>
-            </div>
+    <div class="user-item" :class="{ 'selected-card': selected }" @click="handleClick">
+      <div class="user-card">
+        <div class="user-top">
+          <img :src="profile" class="user-img" />
+          <div>
+            <div class="user-name"><p>{{username}}</p></div>
+            <div class="user-location">{{location}}</div>
           </div>
-      </div>`,
+        </div>
+        <div class="tags">
+          <span class="tag" v-for="tag in tags">{{tag}}</span>
+        </div>
+      </div>
+    </div>`,
 });

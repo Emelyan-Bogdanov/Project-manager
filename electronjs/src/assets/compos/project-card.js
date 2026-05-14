@@ -38,20 +38,16 @@ Vue.component("project-card", {
     },
     urls: {
       type: Array,
-      default: () => [
-        "https://i.pravatar.cc/100?img=4",
-        "https://i.pravatar.cc/100?img=2",
-        "https://i.pravatar.cc/100?img=1",
-      ],
+      default: () => [],
     },
   },
   template: `
-        <div class="task-card">
+        <div class="task-card clicked" @click="$emit('select')">
               <div class="tags">
                 <span class="tag tag-orange" v-for="tag in tags">{{tag}}</span>
               </div>
 
-              <div class="task-title">{{title}}</div>
+              <button class="task-title task-title-button" @click.stop="$emit('select')">{{title}}</button>
 
               <div class="task-text">
                 {{description}}

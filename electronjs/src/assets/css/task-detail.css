@@ -1,0 +1,153 @@
+.task-detail-page {
+  background: #f5f6fa;
+  min-height: 100vh;
+  padding: 28px 36px;
+}
+
+.back-button {
+  border: none;
+  background: #fff;
+  color: #1d2340;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(18, 24, 40, 0.08);
+}
+
+.task-article {
+  max-width: 920px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 34px;
+  box-shadow: 0 12px 30px rgba(18, 24, 40, 0.08);
+}
+
+.task-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #7b7d85;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.task-meta-row span {
+  background: #f4f5f8;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.task-type {
+  color: #c96917 !important;
+  background: #fff2e8 !important;
+  font-weight: 700;
+}
+
+.task-article h1 {
+  color: #1d2340;
+  font-size: 34px;
+  line-height: 1.2;
+  margin-bottom: 18px;
+}
+
+.task-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.task-author img,
+.author-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff2e8;
+  color: #c96917;
+  font-weight: 700;
+}
+
+.task-author p {
+  margin: 2px 0 0;
+  color: #7b7d85;
+  font-size: 13px;
+}
+
+.task-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.task-tags span {
+  background: #eef6ff;
+  color: #236cae;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.article-section {
+  border-top: 1px solid #eceef3;
+  padding-top: 22px;
+  margin-top: 22px;
+}
+
+.article-section h3 {
+  color: #1d2340;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.article-content {
+  color: #343846;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.task-link,
+.file-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #236cae;
+  text-decoration: none;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.image-grid h3 {
+  grid-column: 1 / -1;
+}
+
+.image-grid img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  max-height: 280px;
+}
+
+.empty-state {
+  background: #fff;
+  border-radius: 8px;
+  padding: 26px;
+  color: #7b7d85;
+}

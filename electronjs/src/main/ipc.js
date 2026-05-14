@@ -15,7 +15,12 @@ ipcMain.handle('login', async (event, { username, password, rememberMe }) => {
         if (!username || !password) {
             return { success: false, error: "Nom d'utilisateur et mot de passe requis" };
         }
-        const user = { id: 1, username, name: username, role: "Utilisateur" };
+        const result = await apiFetch('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({ username, password }),
+        });
+        if (!result.success) return result;
+        const user = { ...result.user, role: "Utilisateur" };
         const session = { user, rememberMe, savedAt: Date.now() };
         fs.writeFileSync(getSessionFile(), JSON.stringify(session));
         return { success: true, user };
@@ -49,7 +54,14 @@ async function apiFetch(url, options = {}) {
         headers: { 'Content-Type': 'application/json', ...options.headers },
         ...options,
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+        let message = `HTTP ${res.status}`;
+        try {
+            const data = await res.json();
+            message = data.error || message;
+        } catch {}
+        throw new Error(message);
+    }
     return res.json();
 }
 
@@ -61,6 +73,11 @@ ipcMain.handle('get-users', async () => {
 ipcMain.handle('get-tasks', async () => {
     try { return await apiFetch('/api/tasks'); }
     catch (e) { console.error(e); return []; }
+});
+
+ipcMain.handle('get-task', async (event, id) => {
+    try { return await apiFetch(`/task/${id}`); }
+    catch (e) { console.error(e); return null; }
 });
 
 ipcMain.handle('get-workspaces', async () => {
@@ -94,6 +111,22 @@ ipcMain.handle('create-user', async (event, data) => {
             method: 'POST',
             body: JSON.stringify(data),
         });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('update-user', async (event, id, data) => {
+    try {
+        const result = await apiFetch(`/api/users/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        });
+        if (result.success && result.user) {
+            const session = { user: { ...result.user, role: "Utilisateur" }, rememberMe: true, savedAt: Date.now() };
+            fs.writeFileSync(getSessionFile(), JSON.stringify(session));
+        }
+        return result;
     } catch (e) {
         return { success: false, error: e.message };
     }

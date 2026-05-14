@@ -35,6 +35,11 @@ Vue.component("task-slide-panel", {
       }
     },
   },
+  computed: {
+    serialized() {
+      return JSON.stringify(this.blocks);
+    },
+  },
   methods: {
     async loadTask(id) {
       if (!id) return;
@@ -69,9 +74,6 @@ Vue.component("task-slide-panel", {
       this.blocks = desc
         ? [{ type: "text", content: `<p>${desc}</p>` }]
         : [];
-    },
-    get serialized() {
-      return JSON.stringify(this.blocks);
     },
     addBlock(idx, type) {
       const block =

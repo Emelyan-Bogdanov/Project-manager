@@ -17,4 +17,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     logout: () => ipcRenderer.invoke('logout'),
     checkSession: () => ipcRenderer.invoke('check-session'),
     navigate: (page) => ipcRenderer.send('navigate', page),
+    saveImageFile: (dataUrl) => ipcRenderer.invoke('save-image', dataUrl),
+    deleteImageFile: (fileUrl) => ipcRenderer.invoke('delete-image', fileUrl),
 })

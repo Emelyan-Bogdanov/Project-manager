@@ -13,7 +13,7 @@ Vue.component("task-slide-panel", {
       showBlockMenu: null,
       saving: false,
       focusedBlock: null,
-      titlePrompt: { visible: false, fileData: null, insertIdx: undefined, title: "" },
+      titlePrompt: { visible: false, filePath: null, insertIdx: undefined, title: "" },
       saveError: "",
     };
   },
@@ -91,41 +91,23 @@ Vue.component("task-slide-panel", {
       input.onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image();
-          img.onload = () => {
-            const MAX = 1200;
-            let w = img.width, h = img.height;
-            if (w > MAX || h > MAX) {
-              const ratio = Math.min(MAX / w, MAX / h);
-              w = Math.round(w * ratio);
-              h = Math.round(h * ratio);
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
-            const compressed = canvas.toDataURL("image/jpeg", 0.7);
-            this.titlePrompt = { visible: true, fileData: compressed, insertIdx, title: "" };
-            this.showBlockMenu = null;
-          };
-          img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
+        this.titlePrompt = { visible: true, filePath: file.path, insertIdx, title: "" };
+        this.showBlockMenu = null;
       };
       input.click();
     },
-    confirmImageTitle() {
+    async confirmImageTitle() {
       const title = this.titlePrompt.title || "";
-      const block = { type: "image", src: this.titlePrompt.fileData, title };
-      if (typeof this.titlePrompt.insertIdx === "number") {
-        this.blocks.splice(this.titlePrompt.insertIdx + 1, 0, block);
-      } else {
-        this.blocks.push(block);
+      const result = await window.electronAPI.saveImageFile(this.titlePrompt.filePath);
+      if (result.success) {
+        const block = { type: "image", src: result.url, title };
+        if (typeof this.titlePrompt.insertIdx === "number") {
+          this.blocks.splice(this.titlePrompt.insertIdx + 1, 0, block);
+        } else {
+          this.blocks.push(block);
+        }
       }
-      this.titlePrompt = { visible: false, fileData: null, insertIdx: undefined, title: "" };
+      this.titlePrompt = { visible: false, filePath: null, insertIdx: undefined, title: "" };
     },
     onBlockInput(idx, e) {
       this.blocks[idx].content = e.target.innerHTML;

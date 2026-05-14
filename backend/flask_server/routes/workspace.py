@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..modules import Workspace, db
+from ..modules import Workspace, Task, db
 
 workspace_bp = Blueprint("workspaces", __name__)
 
@@ -65,5 +65,6 @@ def update_workspace(workspace_id):
 
 @workspace_bp.route("/deleteworkspace/<int:workspace_id>")
 def delete_workspace(workspace_id):
+    Task.query.filter_by(workspaceId=workspace_id).delete()
     Workspace.delete_workspace(workspace_id)
     return jsonify({"message": "Workspace deleted"})

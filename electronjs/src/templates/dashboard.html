@@ -101,6 +101,8 @@
                 :user="act.user"
                 :action="act.action"
                 :time="act.time"
+                :clickable="!!act.taskId"
+                @select="openTask(act.taskId)"
               ></activity-item>
             </div>
           </div>
@@ -149,11 +151,6 @@
     </div>
 
     <script>
-      const avatars = [
-        "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
-        "https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=4",
-      ];
-
       new Vue({
         el: "#app",
         data: {
@@ -207,10 +204,11 @@
               }));
 
               const taskActivities = tasks.slice(0, 4).map(t => ({
-                user: "Syst\u00e8me",
+                taskId: t.id,
+                user: t.authorName || "Utilisateur",
                 action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
                 time: "r\u00e9cemment",
-                avatar: avatars[Math.floor(Math.random() * avatars.length)],
+                avatar: t.authorAvatar || "",
               }));
               this.activities = [...this.activityLog, ...taskActivities].slice(0, 8);
             } catch (e) {
@@ -238,7 +236,7 @@
                 user: "Vous",
                 action: `a cr\u00e9\u00e9 le projet "${this.newProject.name}"`,
                 time: "\u00e0 l'instant",
-                avatar: avatars[0],
+                avatar: "",
               });
               this.showModal = false;
               await this.loadStats();
@@ -252,6 +250,11 @@
           goToProject(id) {
             if (id) {
               window.electronAPI.navigate(`workspace.html?id=${id}`);
+            }
+          },
+          openTask(id) {
+            if (id) {
+              window.electronAPI.navigate(`src/templates/task.html?id=${id}`);
             }
           },
         },

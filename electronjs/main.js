@@ -48,7 +48,9 @@ function MainApp() {
   });
 
   ipcMain.on("navigate", (event, page) => {
-    win.loadFile(page);
+    const [filePath, queryString] = page.split('?');
+    const query = queryString ? Object.fromEntries(new URLSearchParams(queryString)) : {};
+    win.loadFile(filePath, { query });
   });
 
   win.on("closed", () => {

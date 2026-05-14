@@ -1,0 +1,50 @@
+.task-modal-card {
+  max-width: 760px;
+  width: min(760px, calc(100vw - 40px));
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: #f7f8fb;
+}
+
+.editor-toolbar button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  color: #1d2340;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rich-editor {
+  min-height: 140px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0 0 8px 8px;
+  padding: 12px 14px;
+  outline: none;
+  background: #fff;
+  line-height: 1.6;
+}
+
+.rich-editor:focus {
+  border-color: #ff9838;
+}
+
+.task-title-button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+}

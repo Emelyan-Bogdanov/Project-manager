@@ -149,15 +149,33 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+.activity-item.clicked {
+  cursor: pointer;
+}
+
 .activity-item:last-child {
   border-bottom: none;
 }
 
+.activity-avatar,
 .activity-avatar img {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+}
+
+.activity-avatar img {
   object-fit: cover;
+}
+
+.activity-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff2e8;
+  color: #c96917;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .activity-text {

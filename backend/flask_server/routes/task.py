@@ -12,10 +12,7 @@ def parse_json_field(raw):
     try:
         return json.loads(raw)
     except (json.JSONDecodeError, TypeError):
-        try:
-            return eval(raw)
-        except:
-            return [raw]
+        return [raw]
 
 def task_to_dict(task):
     author = User.query.get(task.authorId) if task.authorId else None
@@ -67,9 +64,7 @@ def add_task():
 
 @task_bp.route("/task/<int:task_id>")
 def task_info(task_id):
-    try :
-        task = Task.query.get(task_id)
-        return jsonify(task_to_dict(task))
-    except :
-        print("ERROR WHILE GETTING THE TASK INFO USING ITS ID")
+    task = Task.query.get(task_id)
+    if not task:
         return jsonify({"error": "Task not found"}), 404
+    return jsonify(task_to_dict(task))

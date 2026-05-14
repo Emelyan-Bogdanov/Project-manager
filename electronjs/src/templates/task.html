@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tache</title>
+    <link rel="stylesheet" href="../assets/css/all.css" />
+    <link rel="stylesheet" href="../assets/css/index.css" />
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/myframework.css" />
+    <link rel="stylesheet" href="../assets/css/task-detail.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="../assets/compos/menu-button.js"></script>
+    <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/comp-logo.js"></script>
+    <script src="../assets/compos/left-big-menu.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body>
+    <div class="dashboard-wrapper d-flex" id="app">
+      <aside class="sidebar">
+        <left-big-menu></left-big-menu>
+      </aside>
+
+      <main class="main-content task-detail-page">
+        <button class="back-button clicked" @click="goBack">
+          <i class="bi bi-arrow-left"></i>
+          Retour
+        </button>
+
+        <div v-if="loading" class="text-center my-5">
+          <div class="spinner-border" role="status"></div>
+        </div>
+
+        <article v-else-if="task" class="task-article">
+          <div class="task-meta-row">
+            <span class="task-type">{{ task.taskType === "advanced" ? "Tache avancee" : "Tache simple" }}</span>
+            <span>{{ task.deadline || "Sans deadline" }}</span>
+            <span>{{ task.status || "todo" }}</span>
+          </div>
+
+          <h1>{{ task.title }}</h1>
+
+          <div class="task-author">
+            <img v-if="task.authorAvatar" :src="task.authorAvatar" alt="" />
+            <div v-else class="author-placeholder">{{ initials(task.authorName) }}</div>
+            <div>
+              <strong>{{ task.authorName || "Utilisateur" }}</strong>
+              <p>A cree cette tache</p>
+            </div>
+          </div>
+
+          <div class="task-tags" v-if="task.tags && task.tags.length">
+            <span v-for="tag in task.tags" :key="tag">{{ tag }}</span>
+          </div>
+
+          <section class="article-section">
+            <div class="article-content" v-html="task.description || 'Aucune description'"></div>
+          </section>
+
+          <section class="article-section" v-if="task.urls && task.urls.length">
+            <h3>Liens</h3>
+            <a v-for="url in task.urls" :key="url" :href="url" target="_blank" class="task-link">
+              <i class="bi bi-link-45deg"></i>
+              {{ url }}
+            </a>
+          </section>
+
+          <section class="article-section image-grid" v-if="task.images && task.images.length">
+            <h3>Images</h3>
+            <img v-for="image in task.images" :key="image" :src="image" alt="" />
+          </section>
+
+          <section class="article-section" v-if="task.files && task.files.length">
+            <h3>Fichiers</h3>
+            <a
+              v-for="file in task.files"
+              :key="file.name"
+              :href="file.data"
+              :download="file.name"
+              class="file-link"
+            >
+              <i class="bi bi-file-earmark-arrow-down"></i>
+              {{ file.name }}
+            </a>
+          </section>
+        </article>
+
+        <div v-else class="empty-state">Tache introuvable</div>
+      </main>
+    </div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          task: null,
+          loading: true,
+        },
+        async mounted() {
+          const id = new URLSearchParams(window.location.search).get("id");
+          if (!id) {
+            this.loading = false;
+            return;
+          }
+          try {
+            this.task = await window.electronAPI.getTask(Number(id));
+          } catch (e) {
+            console.error(e);
+          } finally {
+            this.loading = false;
+          }
+        },
+        methods: {
+          goBack() {
+            window.history.back();
+          },
+          initials(name) {
+            return (name || "U")
+              .split(" ")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((part) => part[0].toUpperCase())
+              .join("");
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

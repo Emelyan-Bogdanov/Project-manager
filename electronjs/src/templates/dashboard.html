@@ -185,45 +185,71 @@
         },
         methods: {
           async loadStats() {
-            try {
-              const [users, tasks, workspaces, files] = await Promise.all([
-                window.electronAPI.getUsers(),
-                window.electronAPI.getTasks(),
-                window.electronAPI.getWorkspaces(),
-                window.electronAPI.getFiles(),
-              ]);
-              this.stats[0].count = users.length;
-              this.stats[1].count = workspaces.length;
-              this.stats[2].count = tasks.length;
-              this.stats[3].count = files.length;
+            const results = await Promise.allSettled([
+              window.electronAPI.getUsers(),
+              window.electronAPI.getTasks(),
+              window.electronAPI.getWorkspaces(),
+              window.electronAPI.getFiles(),
+            ]);
 
-              this.recentProjects = workspaces.slice(0, 4).map((ws, i) => ({
-                id: ws.id,
-                name: ws.name,
-                members: 0,
-                tasks: 0,
-                status: "En cours",
-                statusClass: "status-progress",
-                color: ["#ff9838", "#2ecc71", "#3498db", "#e74c3c"][i],
-              }));
-
-              this.team = users.slice(0, 4).map((u) => ({
-                name: u.name || u.username,
-                role: "Membre",
-                avatar: u.avatar || "",
-              }));
-
-              const taskActivities = tasks.slice(0, 4).map(t => ({
-                taskId: t.id,
-                user: t.authorName || "Utilisateur",
-                action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
-                time: "r\u00e9cemment",
-                avatar: t.authorAvatar || "",
-              }));
-              this.activities = [...this.activityLog, ...taskActivities].slice(0, 8);
-            } catch (e) {
-              console.error("Error loading stats:", e);
+            const users = results[0].status === "fulfilled" ? results[0].value : [];
+            const tasks = results[1].status === "fulfilled" ? results[1].value : [];
+            const workspaces = results[2].status === "fulfilled" ? results[2].value : [];
+            const files = results[3].status === "fulfilled" ? results[3].value : [];
+            if (results.some(r => r.status === "rejected")) {
+              console.warn("Some stats failed to load, showing partial data");
             }
+
+            this.stats[0].count = users.length;
+            this.stats[1].count = workspaces.length;
+            this.stats[2].count = tasks.length;
+            this.stats[3].count = files.length;
+
+            const wsTaskCounts = {};
+            const wsStatuses = {};
+            for (const ws of workspaces) {
+              try {
+                const wsTasks = await window.electronAPI.getWorkspaceTasks(ws.id);
+                wsTaskCounts[ws.id] = wsTasks.length;
+                const done = wsTasks.filter(t => t.status === "done").length;
+                const total = wsTasks.length;
+                if (total === 0) {
+                  wsStatuses[ws.id] = { label: "En cours", cls: "status-progress" };
+                } else if (done === total) {
+                  wsStatuses[ws.id] = { label: "Termin\u00e9", cls: "status-done" };
+                } else {
+                  wsStatuses[ws.id] = { label: "En cours", cls: "status-progress" };
+                }
+              } catch {
+                wsTaskCounts[ws.id] = 0;
+                wsStatuses[ws.id] = { label: "En cours", cls: "status-progress" };
+              }
+            }
+
+            this.recentProjects = workspaces.slice(0, 4).map((ws, i) => ({
+              id: ws.id,
+              name: ws.name,
+              members: 0,
+              tasks: wsTaskCounts[ws.id] || 0,
+              status: wsStatuses[ws.id] ? wsStatuses[ws.id].label : "En cours",
+              statusClass: wsStatuses[ws.id] ? wsStatuses[ws.id].cls : "status-progress",
+              color: ["#ff9838", "#2ecc71", "#3498db", "#e74c3c"][i],
+            }));
+
+            this.team = users.slice(0, 4).map((u) => ({
+              name: u.name || u.username,
+              role: "Membre",
+              avatar: u.avatar || "",
+            }));
+
+            const taskActivities = tasks.slice(0, 4).map(t => ({
+              taskId: t.id,
+              user: t.authorName || "Utilisateur",
+              action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
+              time: "r\u00e9cemment",
+              avatar: t.authorAvatar || "",
+            }));
+            this.activities = [...this.activityLog, ...taskActivities].slice(0, 8);
           },
           openNewProject() {
             this.newProject = { name: "", description: "" };

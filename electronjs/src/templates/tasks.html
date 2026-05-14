@@ -47,7 +47,7 @@
             <input type="text" v-model="searchQuery" placeholder="Trouver des taches..." />
           </div>
           <div class="filters">
-            <span class="clicked" @click="sortBy"><i class="bi bi-funnel"></i> Trier</span>
+            <span class="clicked" @click="sortBy"><i class="bi bi-funnel"></i> Trier <span v-if="sortOrder">({{ sortOrder === 'newest' ? 'plus recent' : 'plus ancien' }})</span></span>
             <span class="clicked" @click="showFilters = !showFilters"><i class="bi bi-sliders"></i> Filtres</span>
             <!-- <span class="clicked" @click="toggleView"><i class="bi bi-eye"></i> Vue</span> -->
           </div>
@@ -223,6 +223,7 @@
           selectedTag: "",
           selectedUser: "",
           selectedProject: "",
+          sortOrder: "",
           showTaskModal: false,
           showTaskPanel: false,
           selectedTaskId: null,
@@ -240,6 +241,18 @@
               const key = groups[t.status] ? t.status : "todo";
               groups[key].push(t);
             });
+            if (this.sortOrder) {
+              const dir = this.sortOrder === "newest" ? 1 : -1;
+              Object.keys(groups).forEach((k) => {
+                groups[k].sort((a, b) => {
+                  const da = a.created_at || "";
+                  const db = b.created_at || "";
+                  if (da < db) return -dir;
+                  if (da > db) return dir;
+                  return 0;
+                });
+              });
+            }
             return [
               { name: "A faire", status: "todo", tasks: groups.todo },
               { name: "En cours", status: "in_progress", tasks: groups.in_progress },
@@ -251,7 +264,7 @@
             const tag = this.selectedTag;
             const userId = this.selectedUser;
             const projectId = this.selectedProject;
-            if (!q && !tag && !userId && !projectId) return this.columns;
+            if (!q && !tag && !userId && !projectId && !this.sortOrder) return this.columns;
             return this.columns.map((col) => ({
               ...col,
               tasks: col.tasks.filter((t) => {
@@ -292,6 +305,7 @@
                 urls: t.authorAvatar ? [t.authorAvatar] : [],
                 workspaceId: t.workspaceId,
                 workspaceName: t.workspaceName || "",
+                created_at: t.created_at || "",
               }));
             } catch (e) {
               console.error("Error fetching tasks:", e);
@@ -386,7 +400,11 @@
             this.selectedUser = "";
             this.selectedProject = "";
           },
-          sortBy() { console.log("Trier"); },
+          sortBy() {
+            if (this.sortOrder === "") this.sortOrder = "newest";
+            else if (this.sortOrder === "newest") this.sortOrder = "oldest";
+            else this.sortOrder = "";
+          },
           toggleView() { console.log("Changer de vue"); },
         },
       });

@@ -49,7 +49,7 @@
           <div class="filters">
             <span class="clicked" @click="sortBy"><i class="bi bi-funnel"></i> Trier</span>
             <span class="clicked" @click="showFilters = !showFilters"><i class="bi bi-sliders"></i> Filtres</span>
-            <span class="clicked" @click="toggleView"><i class="bi bi-eye"></i> Vue</span>
+            <!-- <span class="clicked" @click="toggleView"><i class="bi bi-eye"></i> Vue</span> -->
           </div>
         </div>
 
@@ -137,7 +137,7 @@
             <div class="form-row">
               <div class="form-group flex-1">
                 <label>Date limite</label>
-                <input type="text" v-model="newTask.deadline" placeholder="ex: 15 Juin" />
+                <input type="date" v-model="newTask.deadline" />
               </div>
               <div class="form-group flex-1">
                 <label>Priorite</label>

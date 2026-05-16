@@ -1,0 +1,19 @@
+{
+  "name": "express-server",
+  "version": "1.0.0",
+  "description": "Express.js backend for Project Manager (migrated from Flask)",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "init-db": "node database/init.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "sequelize": "^6.37.3",
+    "sqlite3": "^5.1.7"
+  }
+}

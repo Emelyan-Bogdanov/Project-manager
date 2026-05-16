@@ -1,5 +1,6 @@
 import json
-from flask import Blueprint, request, jsonify
+import os
+from flask import Blueprint, request, jsonify, current_app
 from ..modules import Task, User, Workspace, db
 
 task_bp = Blueprint("tasks", __name__)
@@ -88,7 +89,33 @@ def task_info(task_id):
 @task_bp.route("/task/<int:task_id>", methods=["PATCH"])
 def update_task(task_id):
     data = request.json
-    task = Task.update_task(task_id, **data)
+    task = Task.query.get(task_id)
     if not task:
         return jsonify({"error": "Task not found"}), 404
+
+    if "images" in data:
+        old_images = parse_json_field(task.images)
+        new_images = data["images"]
+        if isinstance(new_images, str):
+            new_images = parse_json_field(new_images)
+
+        def extract_filename(img):
+            if isinstance(img, dict):
+                return img.get("filename", "")
+            if isinstance(img, str):
+                return img.rsplit("/", 1)[-1]
+            return ""
+
+        old_filenames = set(extract_filename(img) for img in old_images)
+        new_filenames = set(extract_filename(img) for img in new_images)
+        removed = old_filenames - new_filenames
+
+        images_folder = current_app.config["IMAGES_FOLDER"]
+        for fname in removed:
+            if fname:
+                fpath = os.path.join(images_folder, fname)
+                if os.path.exists(fpath):
+                    os.remove(fpath)
+
+    task = Task.update_task(task_id, **data)
     return jsonify(task_to_dict(task))

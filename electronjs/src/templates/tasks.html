@@ -306,7 +306,7 @@
                 author: t.authorName || "Utilisateur",
                 authorId: t.authorId,
                 status: t.status || "todo",
-                image: (t.images && t.images.length > 0) ? t.images[0] : "",
+                image: (t.images && t.images.length > 0) ? (t.images[0].url || t.images[0]) : "",
                 urls: t.authorAvatar ? [t.authorAvatar] : [],
                 workspaceId: t.workspaceId,
                 workspaceName: t.workspaceName || "",
@@ -352,8 +352,12 @@
             })));
           },
           async selectImages(event) {
-            const files = await this.readFiles(event.target.files);
-            this.newTask.images = files.map((file) => file.data);
+            const uploaded = [];
+            for (const file of event.target.files) {
+              const result = await window.electronAPI.uploadImage(file);
+              if (result && result.success) uploaded.push(result);
+            }
+            this.newTask.images = uploaded;
           },
           async selectFiles(event) {
             this.newTask.files = await this.readFiles(event.target.files);

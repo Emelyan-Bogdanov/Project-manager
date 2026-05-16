@@ -258,3 +258,25 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.modal-box.dashboard-modal {
+  padding: 7px;
+  height: auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bs-body-bg);
+}
+
+.modal-box.dashboard-modal h4 {
+  font-size: 1.5rem;
+  width: 100%;
+  padding: 30px;
+}
+
+.modal-box.dashboard-modal .form-group {
+  padding : 7px;
+  display: flex;
+  flex-direction: column;
+}

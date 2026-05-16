@@ -56,6 +56,11 @@ Vue.component("task-slide-panel", {
           session.user &&
           session.user.id === task.authorId;
         this.parseBlocks(task.description || "");
+        if (task.images && task.images.length) {
+          task.images.forEach((src) => {
+            this.blocks.push({ type: "image", src, title: "" });
+          });
+        }
       } catch (e) {
         console.error(e);
         this.task = null;
@@ -86,31 +91,31 @@ Vue.component("task-slide-panel", {
     removeBlock(idx) {
       this.blocks.splice(idx, 1);
     },
-    pickImage(insertIdx) {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        this.titlePrompt = { visible: true, filePath: file.path, insertIdx, title: "" };
-        this.showBlockMenu = null;
-      };
-      input.click();
-    },
-    async confirmImageTitle() {
-      const title = this.titlePrompt.title || "";
-      const result = await window.electronAPI.saveImageFile(this.titlePrompt.filePath);
-      if (result.success) {
-        const block = { type: "image", src: result.url, title };
-        if (typeof this.titlePrompt.insertIdx === "number") {
-          this.blocks.splice(this.titlePrompt.insertIdx + 1, 0, block);
-        } else {
-          this.blocks.push(block);
+      pickImage(insertIdx) {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          this.titlePrompt = { visible: true, file, insertIdx, title: "" };
+          this.showBlockMenu = null;
+        };
+        input.click();
+      },
+      async confirmImageTitle() {
+        const title = this.titlePrompt.title || "";
+        const result = await window.electronAPI.uploadImage(this.titlePrompt.file);
+        if (result && result.success) {
+          const block = { type: "image", src: result.url, title };
+          if (typeof this.titlePrompt.insertIdx === "number") {
+            this.blocks.splice(this.titlePrompt.insertIdx + 1, 0, block);
+          } else {
+            this.blocks.push(block);
+          }
         }
-      }
-      this.titlePrompt = { visible: false, filePath: null, insertIdx: undefined, title: "" };
-    },
+        this.titlePrompt = { visible: false, file: null, insertIdx: undefined, title: "" };
+      },
     onBlockInput(idx, e) {
       this.blocks[idx].content = e.target.innerHTML;
     },

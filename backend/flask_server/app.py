@@ -9,6 +9,8 @@ def create_app() :
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
     app.config["UPLOAD_FOLDER"] = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    app.config["IMAGES_FOLDER"] = os.path.join(os.path.dirname(os.path.dirname(__file__)), "images")
+    os.makedirs(app.config["IMAGES_FOLDER"], exist_ok=True)
     db.init_app(app)
     CORS(app)
 
@@ -31,12 +33,13 @@ def create_app() :
             db.session.rollback()
         # seed_database(db)
 
-    from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp
+    from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp, images_bp
 
     app.register_blueprint(message_bp)
     app.register_blueprint(workspace_bp)
     app.register_blueprint(task_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(files_bp)
+    app.register_blueprint(images_bp)
 
     return app

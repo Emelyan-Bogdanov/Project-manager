@@ -18,6 +18,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
     logout: () => ipcRenderer.invoke('logout'),
     checkSession: () => ipcRenderer.invoke('check-session'),
     navigate: (page) => ipcRenderer.send('navigate', page),
-    saveImageFile: (dataUrl) => ipcRenderer.invoke('save-image', dataUrl),
-    deleteImageFile: (fileUrl) => ipcRenderer.invoke('delete-image', fileUrl),
+    uploadImage: async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('http://localhost:5000/api/images/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        return res.json();
+    },
+    deleteServerImage: async (filename) => {
+        const res = await fetch(`http://localhost:5000/api/images/${filename}`, {
+            method: 'DELETE',
+        });
+        return res.json();
+    },
 })

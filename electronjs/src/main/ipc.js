@@ -170,37 +170,4 @@ ipcMain.handle('create-workspace', async (event, data) => {
     }
 });
 
-// ── Local Image Storage ──
-
-function getImagesDir() {
-    const dir = path.join(app.getPath('userData'), 'images');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    return dir;
-}
-
-function pathToFileURL(filePath) {
-    const normalized = filePath.replace(/\\/g, '/');
-    return 'file:///' + normalized;
-}
-
-ipcMain.handle('save-image', async (event, sourcePath) => {
-    try {
-        const ext = path.extname(sourcePath) || '.png';
-        const filename = `img_${Date.now()}_${Math.random().toString(36).slice(2, 8)}${ext}`;
-        const destPath = path.join(getImagesDir(), filename);
-        fs.copyFileSync(sourcePath, destPath);
-        return { success: true, url: pathToFileURL(destPath) };
-    } catch (e) {
-        return { success: false, error: e.message };
-    }
-});
-
-ipcMain.handle('delete-image', async (event, fileUrl) => {
-    try {
-        const filePath = fileUrl.replace(/^file:\/\/\//, '');
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        return { success: true };
-    } catch (e) {
-        return { success: false, error: e.message };
-    }
-});
+// ── Image Storage (handled via direct fetch in renderer) ──

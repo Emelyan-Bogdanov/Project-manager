@@ -71,7 +71,7 @@
 
           <section class="article-section image-grid" v-if="task.images && task.images.length">
             <h3>Images</h3>
-            <img v-for="image in task.images" :key="image" :src="image" alt="" />
+            <img v-for="image in task.images" :key="image.url || image" :src="image.url || image" alt="" />
           </section>
 
           <section class="article-section" v-if="task.files && task.files.length">

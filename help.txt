@@ -1,0 +1,310 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                    PROJECT MANAGER — Overview                       ║
+║        A full-featured desktop project management application       ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                        WHAT IS PROJECT MANAGER?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ProjectManager is a cross-platform desktop application that helps teams
+organize, track, and manage their projects — all from a single native
+application. It is built with Electron.js (desktop shell), Vue 2 (user
+interface), and Flask / Python (backend API with SQLite database).
+
+No internet connection required. No cloud dependency. Your data stays
+on your machine.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                         CORE FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.  DASHBOARD
+    ──────────
+    • Live statistics: total users, projects, tasks, and files
+    • Quick-access list of recent projects with status indicators
+    • Activity feed showing the latest team actions
+    • Team member overview with avatars and roles
+    • One-click "New Project" modal from the dashboard
+
+2.  KANBAN TASK BOARD
+    ─────────────────
+    • Three-column board: To Do / In Progress / Done
+    • Visual task cards showing images, tags, title, description,
+      deadline, comments, views, and author avatars
+    • Real-time search across titles, descriptions, and tags
+    • Multi-criteria filter panel: by tag, user, or project
+    • Sort tasks by newest or oldest creation date
+    • Clear all filters with one button
+
+3.  TASK CREATION & MANAGEMENT
+    ───────────────────────────
+    • Create tasks with Simple or Advanced types
+    • Rich text editor for descriptions (bold, italic, underline)
+    • Set deadlines, priority levels (Low / Medium / High), and
+      status
+    • Add tags (comma-separated) and URLs (one per line)
+    • Upload images directly to the server (stored on disk, not as
+      bloated base64 in the database)
+    • Attach files (PDFs, images, archives, etc.)
+    • Required reminder field with date-time picker
+    • Assign tasks to any project/workspace
+
+4.  MEDIUM-LIKE BLOCK EDITOR
+    ─────────────────────────
+    • Edit task descriptions with a modern block-based editor
+      inspired by Medium
+    • Insert dynamic blocks: headers, rich text paragraphs, and
+      images with captions
+    • Floating formatting toolbar (bold, italic, underline)
+    • Add new blocks between existing blocks with "+" dividers
+    • Remove blocks individually
+    • Empty state prompts to start writing or add an image
+    • Structured JSON persistence for easy parsing and storage
+    • Editing badge when modifying your own tasks
+
+5.  PROJECTS / WORKSPACES
+    ──────────────────────
+    • Create and manage multiple projects
+    • Each project has its own Kanban board
+    • Project cards with colored folder icons, descriptions,
+      task counts, and member counts
+    • One-click navigation between projects
+    • Cascade delete: removing a project removes all its tasks
+    • Per-project team messaging (API-ready)
+
+6.  TASK DETAIL VIEW
+    ─────────────────
+    • Full-page task detail accessible via one click
+    • Type badge (Simple / Advanced), deadline, and status
+    • Author information with avatar and timestamp
+    • Tags, rich HTML description, links, and image gallery
+    • Downloadable file attachments
+
+7.  USER PROFILES
+    ──────────────
+    • Personal profile page with cover photo, avatar, and info
+    • View any team member's profile
+    • Edit mode for your own profile: name, username, email,
+      location, skills/tags
+    • Upload avatar directly from the interface
+    • Camera overlay icon on your avatar for quick editing
+    • Smart avatar fallback using initials via ui-avatars.com
+
+8.  TEAM DIRECTORY
+    ───────────────
+    • Split-panel layout: user list on left, detail on right
+    • Real-time search filtering by username, location, or tags
+    • Click any user to see their full profile
+    • Selected user highlighted in the list
+
+9.  FILE MANAGEMENT
+    ────────────────
+    • Upload files via click-to-browse interface
+    • Visual file type icons: image, video, audio, PDF, ZIP,
+      text, or generic
+    • Formatted file sizes (B, KB, MB, GB)
+    • Upload date and uploader name (clickable to profile)
+    • Download files with one click
+    • Delete files you own (removes from database + disk)
+
+10. AUTHENTICATION & SECURITY
+    ─────────────────────────
+    • Login with username and password
+    • "Remember Me" for automatic login on next launch
+    • Multi-step registration: account info then profile setup
+    • Real-time username and email availability checks
+    • Session persisted to encrypted user data directory
+    • Automatic logout if all users are deleted from the system
+
+11. DESKTOP REMINDER NOTIFICATIONS
+    ───────────────────────────────
+    • Background service polls for upcoming reminders every 60
+      seconds
+    • Native OS desktop notifications with task title, deadline,
+      and project name
+    • Click any notification to jump directly to the task detail
+    • Smart duplicate prevention: same reminder won't fire twice
+    • Automatically stops when the application closes
+
+12. SIDEBAR NAVIGATION
+    ───────────────────
+    • Company branding with logo and name
+    • Main navigation: Dashboard, Tasks, Projects, Files,
+      Users, Profile
+    • Dynamic team member list with avatars
+    • One-click logout
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     TECHNOLOGY STACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ┌──────────────────────────────────────────────────────────┐
+    │  Desktop Shell:    Electron 42                           │
+    │  Frontend:         Vue 2 + Bootstrap 5 + Custom CSS      │
+    │  Backend API:      Flask (Python)                        │
+    │  Database:         SQLite via SQLAlchemy                  │
+    │  Icons:            Bootstrap Icons                       │
+    │  Packaging:        electron-builder (Windows NSIS)       │
+    │  Communication:    IPC (contextBridge) + HTTP fetch      │
+    └──────────────────────────────────────────────────────────┘
+
+    Architecture:
+    ┌──────────────┐        IPC        ┌──────────────┐
+    │   Renderer   │ ◄──────────────► │    Main      │
+    │  (Vue 2 UI)  │   preload.js      │   Process    │
+    └──────────────┘                   └──────┬───────┘
+                                              │ HTTP
+                                              ▼
+                                     ┌────────────────┐
+                                     │  Flask API     │
+                                     │  localhost:5000 │
+                                     └────────┬───────┘
+                                              │
+                                              ▼
+                                     ┌────────────────┐
+                                     │    SQLite DB   │
+                                     │   test.db      │
+                                     └────────────────┘
+
+    All images uploaded by users are stored in:
+        backend/images/
+
+    All file attachments are stored in:
+        backend/uploads/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                       HOW TO RUN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Start the Flask backend:
+       cd backend
+       python run_flask_server.py
+
+  2. Start the Electron app:
+       cd electronjs
+       npm start
+
+  The Flask server must be running on port 5000 for the Electron
+  app to function correctly.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                    API ENDPOINTS (Flask)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Users
+    GET   /api/users              List all users
+    POST  /api/users              Create a user
+    GET   /howmanyusers           Get user count
+    PATCH /api/users/<id>         Update user
+    GET   /deleteuser/<id>        Delete user
+    POST  /api/login              Authenticate user
+
+  Tasks
+    GET   /api/tasks              List all tasks
+    GET   /task/<id>              Get task details
+    POST  /addtask                Create a task
+    PATCH /task/<id>              Update task (with image cleanup)
+    GET   /api/workspaces/<id>/tasks     Tasks by workspace
+    GET   /api/tasks/upcoming-reminders  Tasks with upcoming reminders
+
+  Workspaces
+    GET   /api/workspaces         List all workspaces
+    GET   /workspace/<id>         Get workspace details
+    POST  /addworkspace           Create a workspace
+    POST  /updateworkspace/<id>   Update workspace
+    GET   /deleteworkspace/<id>   Delete workspace (cascades tasks)
+
+  Messages
+    GET   /messages/<workspace_id>/   Messages per workspace
+
+  Files
+    GET   /api/files              List all files
+    POST  /api/files/upload       Upload a file
+    GET   /api/files/<id>/download     Download a file
+    DELETE /api/files/<id>/delete      Delete a file
+
+  Images
+    POST  /api/images/upload      Upload an image
+    GET   /api/images/<filename>  Serve an image
+    DELETE /api/images/<filename> Delete an image file
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     VUE 2 COMPONENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Component              Description
+  ──────────────────────────────────────────────────────────────
+  company-logo           Orange circle + brand name logo
+  side-menu-button       Sidebar navigation link with badge
+  left-big-menu          Full sidebar with menu, members, logout
+  sidebar-section-header Section divider with optional "+" action
+  sidebar-member-item    Team member entry with avatar
+  stat-card              Dashboard metric card (icon + count)
+  project-card           Kanban task card with image + metadata
+  project-list-item      Compact project row with color dot
+  activity-item          Activity feed entry with avatar
+  team-member-item       Team member display card
+  user-card-item         User card for directory
+  column-title           Kanban column header
+  tag-compo              Tag filter with count
+  task-slide-panel       Slide-in task editor with block editor
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     DATABASE MODELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  User
+    id, name, username (unique), email (unique), password,
+    avatar, tags, location
+
+  Workspace
+    id, name (unique), description, iconPath
+
+  Task
+    id, title, taskType, tags, description, urls, views,
+    comments, deadline, authorId, images, files, priority,
+    status, workspaceId, created_at, reminder
+
+  FileEntry
+    id, filename, original_name, filepath, size, mime_type,
+    uploaded_by, created_at
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                        WHY PROJECT MANAGER?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ Fully offline — no internet required after setup
+  ✓ Local data ownership — your data stays on your machine
+  ✓ Native desktop experience — runs as a standalone Windows app
+  ✓ Modern UI — clean, responsive, and intuitive interface
+  ✓ Self-hosted backend — full control over your infrastructure
+  ✓ Extensible — Python backend makes customization easy
+  ✓ Lightweight — SQLite database, no heavy server setup
+  ✓ Real-time notifications — never miss a deadline again
+  ✓ Team-ready — multi-user support with profiles and directory
+  ✓ Free and open-source — no licensing costs
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                        BUILT WITH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Electron 42      — Desktop application framework
+  Vue 2            — Progressive JavaScript framework
+  Flask            — Python web framework
+  SQLAlchemy       — SQL toolkit and ORM
+  SQLite           — Embedded database engine
+  Bootstrap 5      — CSS framework for responsive design
+  Bootstrap Icons  — Icon library
+  electron-builder — Packaging and distribution
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

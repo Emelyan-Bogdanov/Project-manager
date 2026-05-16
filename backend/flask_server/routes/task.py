@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, current_app
 from ..modules import Task, User, Workspace, db
 
@@ -49,6 +50,24 @@ def all_tasks():
 def api_all_tasks():
     tasks = Task.query.all()
     return jsonify([task_to_dict(t) for t in tasks])
+
+@task_bp.route("/api/tasks/upcoming-reminders")
+def upcoming_reminders():
+    window_minutes = request.args.get("window", 5, type=int)
+    now = datetime.now()
+    end = now + timedelta(minutes=window_minutes)
+    tasks = Task.query.all()
+    upcoming = []
+    for task in tasks:
+        if not task.reminder or task.status == "done":
+            continue
+        try:
+            reminder_time = datetime.strptime(task.reminder, "%Y-%m-%dT%H:%M")
+            if now <= reminder_time <= end:
+                upcoming.append(task_to_dict(task))
+        except ValueError:
+            pass
+    return jsonify(upcoming)
 
 @task_bp.route("/api/workspaces/<int:workspace_id>/tasks")
 def workspace_tasks(workspace_id):

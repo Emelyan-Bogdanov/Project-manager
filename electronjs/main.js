@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 require('./src/main/ipc');
+const reminder = require('./src/main/reminder');
 
 let win;
 
@@ -59,6 +60,8 @@ async function MainApp() {
     await checkUsersExist();
   }
 
+  reminder.start(win);
+
   ipcMain.on("open-profile", () => {
     win.loadFile("src/templates/profile.html");
   });
@@ -76,13 +79,19 @@ async function MainApp() {
 
   win.on("closed", () => {
     win = null;
+    reminder.stop();
   });
 }
 
 app.whenReady().then(MainApp);
 
 app.on("window-all-closed", () => {
+  reminder.stop();
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+app.on("before-quit", () => {
+  reminder.stop();
 });
